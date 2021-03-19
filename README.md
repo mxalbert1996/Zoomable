@@ -1,10 +1,29 @@
 # Zoomable  
 [![](https://jitpack.io/v/Tlaster/Zoomable.svg)](https://jitpack.io/#Tlaster/Zoomable)  
-Easy zoom in and out with drag support for Jetpack Compose  
+Easy zoom in and out with drag support for Jetpack Compose 
 
 <video controls="false" allowfullscreen="false">
   <source src="video/video.mp4" type="video/mp4">
 </video>
+
+# Usage
+Add Jitpack
+```
+maven { url 'https://jitpack.io' }
+```
+Add the dependency
+```
+implementation 'com.github.Tlaster:Zoomable:0.1.0'
+```
+Example
+```
+val state = rememberZoomableState(
+    minScale = 2f
+)
+Zoomable(state = state) {
+    Text(text = "Zoom me!")
+}
+```
 
 # License
 ```
