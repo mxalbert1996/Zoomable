@@ -6,5 +6,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Zoomable"
-include ':app'
+include ':sample'
 include ':zoomable'
