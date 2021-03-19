@@ -2,9 +2,7 @@
 [![](https://jitpack.io/v/Tlaster/Zoomable.svg)](https://jitpack.io/#Tlaster/Zoomable)  
 Easy zoom in and out with drag support for Jetpack Compose 
 
-<video controls="false" allowfullscreen="false">
-  <source src="video/video.mp4" type="video/mp4">
-</video>
+![](image/image.webp)
 
 # Usage
 Add Jitpack
