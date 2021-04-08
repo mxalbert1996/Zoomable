@@ -11,7 +11,7 @@ maven { url 'https://jitpack.io' }
 ```
 Add the dependency
 ```
-implementation 'com.github.Tlaster:Zoomable:0.2.0'
+implementation 'com.github.Tlaster:Zoomable:0.2.1'
 ```
 Example
 ```
