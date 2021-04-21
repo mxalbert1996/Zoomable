@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 fun Zoomable(
     state: ZoomableState,
     modifier: Modifier = Modifier,
+    enable: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -52,14 +53,16 @@ fun Zoomable(
             state.updateBounds(maxX, maxY)
         }
         val transformableState = rememberTransformableState { zoomChange, _, _ ->
-            state.onZoomChange(zoomChange)
+            if (enable) {
+                state.onZoomChange(zoomChange)
+            }
         }
         Box(
             modifier = Modifier
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDrag = { change, dragAmount ->
-                            if (state.zooming) {
+                            if (state.zooming && enable) {
                                 change.consumePositionChange()
                                 scope.launch {
                                     state.drag(dragAmount)
@@ -71,10 +74,12 @@ fun Zoomable(
                             }
                         },
                         onDragCancel = {
-                            state.resetTracking()
+                            if (enable) {
+                                state.resetTracking()
+                            }
                         },
                         onDragEnd = {
-                            if (state.zooming) {
+                            if (state.zooming && enable) {
                                 scope.launch {
                                     state.dragEnd()
                                 }
