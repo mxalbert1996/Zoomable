@@ -76,7 +76,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'moe.tlaster'
                 artifactId = 'Zoomable'
-                version = '0.2.1'
+                version = '0.2.2'
             }
         }
     }
