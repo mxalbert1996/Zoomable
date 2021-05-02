@@ -53,7 +53,9 @@ fun Zoomable(
         }
         val transformableState = rememberTransformableState { zoomChange, _, _ ->
             if (enable) {
-                state.onZoomChange(zoomChange)
+                scope.launch {
+                    state.onZoomChange(zoomChange)
+                }
             }
         }
         Box(
