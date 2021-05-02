@@ -63,7 +63,7 @@ class ZoomableState(
     private var _scale by mutableStateOf(initialScale)
 
     init {
-        require(minScale < maxScale) { "minScale must be > maxScale" }
+        require(minScale < maxScale) { "minScale must be < maxScale" }
     }
 
     /**
