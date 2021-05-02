@@ -3,7 +3,6 @@
 package moe.tlaster.zoomable
 
 import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -86,6 +85,22 @@ fun Zoomable(
                                 }
                             }
                         },
+                    )
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onDoubleTap = {
+                            if (enable) {
+                                val newScale = if (state.scale > state.minScale) {
+                                    state.minScale
+                                } else {
+                                    state.minScale * 2
+                                }
+                                scope.launch {
+                                    state.animateScaleTo(newScale)
+                                }
+                            }
+                        }
                     )
                 }
                 .transformable(state = transformableState)
