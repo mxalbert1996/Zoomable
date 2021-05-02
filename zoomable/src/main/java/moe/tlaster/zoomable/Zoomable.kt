@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
  *
  * @param state the state object to be used to observe the [Zoomable] state.
  * @param modifier the modifier to apply to this layout.
+ * @param doubleTapScale a function called on double tap gesture, will scale to returned value.
  * @param content a block which describes the content.
  */
 @Composable
@@ -31,6 +32,7 @@ fun Zoomable(
     state: ZoomableState,
     modifier: Modifier = Modifier,
     enable: Boolean = true,
+    doubleTapScale: (() -> Float)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -56,6 +58,19 @@ fun Zoomable(
                     state.onZoomChange(zoomChange)
                 }
             }
+        }
+        val doubleTapModifier = if (doubleTapScale != null && enable) {
+            Modifier.pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        scope.launch {
+                            state.animateScaleTo(doubleTapScale())
+                        }
+                    }
+                )
+            }
+        } else {
+            Modifier
         }
         Box(
             modifier = Modifier
@@ -87,22 +102,7 @@ fun Zoomable(
                         },
                     )
                 }
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onDoubleTap = {
-                            if (enable) {
-                                val newScale = if (state.scale > state.minScale) {
-                                    state.minScale
-                                } else {
-                                    state.minScale * 2
-                                }
-                                scope.launch {
-                                    state.animateScaleTo(newScale)
-                                }
-                            }
-                        }
-                    )
-                }
+                .then(doubleTapModifier)
                 .transformable(state = transformableState)
                 .layout { measurable, constraints ->
                     val placeable =
