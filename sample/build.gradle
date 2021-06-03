@@ -42,7 +42,7 @@ android {
 dependencies {
     implementation project(":zoomable")
     implementation "androidx.compose.material:material:$compose_version"
-    implementation "com.google.accompanist:accompanist-pager:0.10.0"
+    implementation "com.google.accompanist:accompanist-pager:0.11.1"
     implementation 'androidx.activity:activity-compose:1.3.0-alpha08'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
