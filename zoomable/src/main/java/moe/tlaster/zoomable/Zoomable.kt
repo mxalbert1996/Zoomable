@@ -2,9 +2,8 @@
 
 package moe.tlaster.zoomable
 
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.rememberTransformableState
-import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -16,8 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.consumePositionChange
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.layout
 import kotlinx.coroutines.launch
 
@@ -60,7 +59,7 @@ fun Zoomable(
         Box(
             modifier = Modifier
                 .pointerInput(Unit) {
-                    detectDragGestures(
+                    detectDrag(
                         onDrag = { change, dragAmount ->
                             if (state.zooming && enable) {
                                 change.consumePositionChange()
@@ -110,6 +109,36 @@ fun Zoomable(
                 }
         ) {
             content.invoke(this)
+        }
+    }
+}
+
+
+private suspend fun PointerInputScope.detectDrag(
+    onDragStart: (Offset) -> Unit = { },
+    onDragEnd: () -> Unit = { },
+    onDragCancel: () -> Unit = { },
+    onDrag: (change: PointerInputChange, dragAmount: Offset) -> Unit
+) {
+    forEachGesture {
+        awaitPointerEventScope {
+            val down = awaitFirstDown(requireUnconsumed = false)
+            var drag: PointerInputChange?
+            do {
+                drag = awaitTouchSlopOrCancellation(down.id, onDrag)
+            } while (drag != null && !drag.positionChangeConsumed())
+            if (drag != null) {
+                onDragStart.invoke(drag.position)
+                if (
+                    !drag(drag.id) {
+                        onDrag(it, it.positionChange())
+                    }
+                ) {
+                    onDragCancel()
+                } else {
+                    onDragEnd()
+                }
+            }
         }
     }
 }
