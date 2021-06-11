@@ -1,4 +1,8 @@
 <resources>
-    <style name="Theme.Zoomable" parent="android:Theme.DeviceDefault.NoActionBar">
+
+    <style name="Theme.Zoomable" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+
 </resources>
