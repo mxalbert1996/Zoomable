@@ -1,9 +1,6 @@
-@file:JvmName("Zoomable")
-
-package moe.tlaster.zoomable
+package com.mxalbert.zoomable
 
 import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints

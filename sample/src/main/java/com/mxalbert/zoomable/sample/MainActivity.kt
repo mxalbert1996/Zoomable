@@ -1,4 +1,4 @@
-package moe.tlaster.zoomable.sample
+package com.mxalbert.zoomable.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,8 +14,8 @@ import androidx.compose.runtime.setValue
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import moe.tlaster.zoomable.Zoomable
-import moe.tlaster.zoomable.rememberZoomableState
+import com.mxalbert.zoomable.Zoomable
+import com.mxalbert.zoomable.rememberZoomableState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

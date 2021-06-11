@@ -1,4 +1,4 @@
-package moe.tlaster.zoomable
+package com.mxalbert.zoomable
 
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable

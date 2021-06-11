@@ -8,7 +8,7 @@ android {
     buildToolsVersion = libs.versions.buildTools.get()
 
     defaultConfig {
-        applicationId = "moe.tlaster.zoomable.sample"
+        applicationId = "com.mxalbert.zoomable.sample"
         minSdk = libs.versions.sdk.min.get().toInt()
         targetSdk = libs.versions.sdk.target.get().toInt()
         versionCode = 1
