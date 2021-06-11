@@ -40,7 +40,14 @@ private fun Sample() {
         Box {
             Zoomable(
                 state = state,
-                enable = enable
+                enable = enable,
+                doubleTapScale = {
+                    if (state.scale > 32f) {
+                        state.minScale
+                    } else {
+                        state.scale * 2
+                    }
+                }
             ) {
                 // Our page content
                 Text(

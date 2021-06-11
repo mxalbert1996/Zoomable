@@ -2,15 +2,14 @@ package moe.tlaster.zoomable
 
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.exponentialDecay
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import kotlinx.coroutines.coroutineScope
@@ -58,23 +57,20 @@ class ZoomableState(
     @FloatRange(from = 0.0) initialScale: Float = minScale,
 ) {
     private val velocityTracker = VelocityTracker()
-    private var _translateY = Animatable(initialTranslateY)
-    private var _translateX = Animatable(initialTranslateX)
-    private var _scale by mutableStateOf(initialScale)
+    private val _translateY = Animatable(initialTranslateY)
+    private val _translateX = Animatable(initialTranslateX)
+    private val _scale = Animatable(initialScale)
 
     init {
-        require(minScale < maxScale) { "minScale must be > maxScale" }
+        require(minScale < maxScale) { "minScale must be < maxScale" }
     }
 
     /**
      * The current scale value for [Zoomable]
      */
     @get:FloatRange(from = 0.0)
-    var scale: Float
-        get() = _scale
-        internal set(value) {
-            _scale = value.coerceIn(minimumValue = minScale, maximumValue = maxScale)
-        }
+    val scale: Float
+        get() = _scale.value
 
     /**
      * The current translateY value for [Zoomable]
@@ -92,6 +88,28 @@ class ZoomableState(
 
     internal val zooming: Boolean
         get() = scale > minScale && scale < maxScale
+
+    /**
+     * Instantly sets scale of [Zoomable] to given [scale]
+     */
+    suspend fun snapScaleTo(scale: Float) = coroutineScope {
+        _scale.snapTo(scale.coerceIn(minimumValue = minScale, maximumValue = maxScale))
+    }
+
+    /**
+     * Animates scale of [Zoomable] to given [scale]
+     */
+    suspend fun animateScaleTo(
+        scale: Float,
+        animationSpec: AnimationSpec<Float> = spring(),
+        initialVelocity: Float = 0f,
+    ) = coroutineScope {
+        _scale.animateTo(
+            targetValue = scale.coerceIn(minimumValue = minScale, maximumValue = maxScale),
+            animationSpec = animationSpec,
+            initialVelocity = initialVelocity,
+        )
+    }
 
     private suspend fun fling(velocity: Offset) = coroutineScope {
         launch {
@@ -127,9 +145,7 @@ class ZoomableState(
         _translateX.updateBounds(-maxX, maxX)
     }
 
-    internal fun onZoomChange(zoomChange: Float) {
-        scale *= zoomChange
-    }
+    internal suspend fun onZoomChange(zoomChange: Float) = snapScaleTo(scale * zoomChange)
 
     internal fun addPosition(timeMillis: Long, position: Offset) {
         velocityTracker.addPosition(timeMillis = timeMillis, position = position)
