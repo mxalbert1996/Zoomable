@@ -1,11 +1,13 @@
+enableFeaturePreview("VERSION_CATALOGS")
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
 }
+
 rootProject.name = "Zoomable"
-include ':sample'
-include ':zoomable'
+include(":sample")
+include(":zoomable")
