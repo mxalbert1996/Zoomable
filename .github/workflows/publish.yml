@@ -17,6 +17,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Prepare environment
+        env:
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        run: sh -c "mkdir -p ~/.gradle && echo '${GRADLE_PROPERTIES}' > ~/.gradle/gradle.properties"
+
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -24,6 +29,5 @@ jobs:
 
       - name: Publish
         env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY }}
         run: ./gradlew --no-daemon publish
