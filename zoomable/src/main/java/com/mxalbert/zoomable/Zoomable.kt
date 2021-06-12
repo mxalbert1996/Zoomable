@@ -43,66 +43,11 @@ fun Zoomable(
     val scope = rememberCoroutineScope()
     val gesturesModifier = if (!enabled) Modifier else Modifier
         .pointerInput(Unit) {
-            coroutineScope {
-                launch {
-                    detectTapGestures(onDoubleTap = { offset ->
-                        scope.launch {
-                            val isZooming = state.isZooming
-                            val targetScale =
-                                if (isZooming) state.minScale else state.doubleTapScale
-                            state.animateScaleTo(
-                                targetScale = targetScale,
-                                targetTranslation = if (isZooming) {
-                                    Offset.Zero
-                                } else {
-                                    state.calculateTargetTranslation(offset) * targetScale
-                                }
-                            )
-                        }
-                    }, onPress = {
-                        state.onPress()
-                    })
-                }
-                launch {
-                    detectDragGestures(
-                        state = state,
-                        dismissGestureEnabled = dismissGestureEnabledState,
-                        onDrag = { change, dragAmount ->
-                            if (state.isZooming) {
-                                scope.launch {
-                                    state.onDrag(dragAmount)
-                                    state.addPosition(
-                                        change.uptimeMillis,
-                                        change.position
-                                    )
-                                }
-                            } else {
-                                state.onDismissDrag(dragAmount.y)
-                            }
-                        },
-                        onDragCancel = {
-                            if (state.isZooming) {
-                                state.resetTracking()
-                            } else {
-                                scope.launch {
-                                    state.onDismissDragEnd()
-                                }
-                            }
-                        },
-                        onDragEnd = {
-                            scope.launch {
-                                if (state.isZooming) {
-                                    state.onDragEnd()
-                                } else {
-                                    if (!(state.shouldDismiss && onDismiss())) {
-                                        state.onDismissDragEnd()
-                                    }
-                                }
-                            }
-                        }
-                    )
-                }
-            }
+            detectTapAndDragGestures(
+                state = state,
+                dismissGestureEnabled = dismissGestureEnabledState,
+                onDismiss = onDismiss
+            )
         }
         .transformable(state = rememberTransformableState { zoomChange, panChange, _ ->
             if (state.dismissDragAbsoluteOffsetY == 0f) {
@@ -140,6 +85,74 @@ fun Zoomable(
             }
     ) {
         content()
+    }
+}
+
+internal suspend fun PointerInputScope.detectTapAndDragGestures(
+    state: ZoomableState,
+    dismissGestureEnabled: State<Boolean>,
+    onDismiss: () -> Boolean
+) = coroutineScope {
+    launch {
+        detectTapGestures(
+            onDoubleTap = { offset ->
+                launch {
+                    val isZooming = state.isZooming
+                    val targetScale =
+                        if (isZooming) state.minScale else state.doubleTapScale
+                    state.animateScaleTo(
+                        targetScale = targetScale,
+                        targetTranslation = if (isZooming) {
+                            Offset.Zero
+                        } else {
+                            state.calculateTargetTranslation(offset) * targetScale
+                        }
+                    )
+                }
+            },
+            onPress = {
+                state.onPress()
+            }
+        )
+    }
+    launch {
+        detectDragGestures(
+            state = state,
+            dismissGestureEnabled = dismissGestureEnabled,
+            onDrag = { change, dragAmount ->
+                if (state.isZooming) {
+                    launch {
+                        state.onDrag(dragAmount)
+                        state.addPosition(
+                            change.uptimeMillis,
+                            change.position
+                        )
+                    }
+                } else {
+                    state.onDismissDrag(dragAmount.y)
+                }
+            },
+            onDragCancel = {
+                if (state.isZooming) {
+                    state.resetTracking()
+                } else {
+                    launch {
+                        state.onDismissDragEnd()
+                    }
+                }
+            },
+            onDragEnd = {
+                launch {
+                    if (state.isZooming) {
+                        state.onDragEnd()
+                    } else {
+                        if (!(state.shouldDismiss && onDismiss())) {
+                            state.onDismissDragEnd()
+                        }
+                    }
+                }
+            }
+        )
     }
 }
 

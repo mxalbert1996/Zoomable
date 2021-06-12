@@ -27,22 +27,22 @@ import kotlin.math.sin
  *
  * @param minScale The minimum [ZoomableState.scale] value.
  * @param maxScale The maximum [ZoomableState.scale] value.
- * @param minScale The [ZoomableState.scale] Value to animate to when a double tap happens.
+ * @param doubleTapScale The [ZoomableState.scale] Value to animate to when a double tap happens.
+ * @param initialScale The initial value for [ZoomableState.scale].
  * @param initialTranslationX The initial value for [ZoomableState.translationX].
  * @param initialTranslationY The initial value for [ZoomableState.translationY].
- * @param initialScale The initial value for [ZoomableState.scale].
  */
 @Composable
 fun rememberZoomableState(
     @FloatRange(from = 0.0) minScale: Float = ZoomableDefaults.MinScale,
     @FloatRange(from = 0.0) maxScale: Float = ZoomableDefaults.MaxScale,
     @FloatRange(from = 0.0) doubleTapScale: Float = ZoomableDefaults.DoubleTapScale,
+    @FloatRange(from = 0.0) initialScale: Float = minScale,
     @FloatRange(from = 0.0) initialTranslationX: Float = 0f,
-    @FloatRange(from = 0.0) initialTranslationY: Float = 0f,
-    @FloatRange(from = 0.0) initialScale: Float = minScale
+    @FloatRange(from = 0.0) initialTranslationY: Float = 0f
 ): ZoomableState {
     return rememberSaveable(saver = ZoomableState.Saver) {
-        ZoomableState(initialTranslationX, initialTranslationY, initialScale)
+        ZoomableState(initialScale, initialTranslationX, initialTranslationY)
     }.apply {
         this.minScale = minScale
         this.maxScale = maxScale
@@ -53,16 +53,16 @@ fun rememberZoomableState(
 /**
  * A state object that can be hoisted to observe scale and translate for [Zoomable].
  *
+ * @param initialScale The initial value for [scale].
  * @param initialTranslationX The initial value for [translationX].
  * @param initialTranslationY The initial value for [translationY].
- * @param initialScale The initial value for [scale].
  * @see rememberZoomableState
  */
 @Stable
 class ZoomableState(
+    @FloatRange(from = 0.0) initialScale: Float = ZoomableDefaults.MinScale,
     @FloatRange(from = 0.0) initialTranslationX: Float = 0f,
-    @FloatRange(from = 0.0) initialTranslationY: Float = 0f,
-    @FloatRange(from = 0.0) initialScale: Float = ZoomableDefaults.MinScale
+    @FloatRange(from = 0.0) initialTranslationY: Float = 0f
 ) {
     /**
      * The minimum [scale] value.
@@ -116,7 +116,7 @@ class ZoomableState(
         }
 
     internal val shouldDismiss: Boolean
-        get() = abs(dismissDragAbsoluteOffsetY) > childSize.height / 2
+        get() = abs(dismissDragAbsoluteOffsetY) > childSize.height * DismissDragThreshold
 
     internal var size = IntSize.Zero
         set(value) {
@@ -306,7 +306,8 @@ class ZoomableState(
     }
 }
 
-private const val DismissDragResistanceFactor = 2f
+internal const val DismissDragResistanceFactor = 2f
+internal const val DismissDragThreshold = 0.75f
 
 object ZoomableDefaults {
     /**

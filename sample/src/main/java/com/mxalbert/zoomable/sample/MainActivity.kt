@@ -47,9 +47,7 @@ class MainActivity : ComponentActivity() {
 private fun Sample(onDismiss: () -> Unit) {
     HorizontalPager(state = rememberPagerState(pageCount = images.size)) { index ->
         val state = rememberZoomableState()
-        var enabled by remember {
-            mutableStateOf(true)
-        }
+        var enabled by remember { mutableStateOf(true) }
         Box {
             val painter = rememberCoilPainter(request = images[index])
             Zoomable(

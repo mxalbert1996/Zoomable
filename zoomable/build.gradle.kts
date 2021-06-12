@@ -17,6 +17,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
     packagingOptions {
         resources.excludes += "META-INF/*"
     }
@@ -27,5 +31,6 @@ dependencies {
     implementation(libs.compose.foundation)
 
     testImplementation(libs.jUnit)
+    testImplementation(libs.truth)
     testImplementation(libs.coroutines.test)
 }
