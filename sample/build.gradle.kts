@@ -11,8 +11,8 @@ android {
         applicationId = "com.mxalbert.zoomable.sample"
         minSdk = libs.versions.sdk.min.get().toInt()
         targetSdk = libs.versions.sdk.target.get().toInt()
+        versionName = property("VERSION_NAME") as String
         versionCode = 1
-        versionName = "1.0"
     }
 
     buildTypes {

@@ -1,6 +1,9 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     id("com.android.library")
     kotlin("android")
+    id("com.vanniktech.maven.publish")
 }
 
 kotlin {
@@ -33,4 +36,21 @@ dependencies {
     testImplementation(libs.jUnit)
     testImplementation(libs.truth)
     testImplementation(libs.coroutines.test)
+}
+
+mavenPublish {
+    sonatypeHost = SonatypeHost.S01
+}
+
+publishing {
+    repositories {
+        val version = property("VERSION_NAME") as String
+        maven(
+            url = if (version.endsWith("SNAPSHOT")) {
+                "$buildDir/repos/snapshots"
+            } else {
+                "$buildDir/repos/releases"
+            }
+        )
+    }
 }

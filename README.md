@@ -1,6 +1,8 @@
-# Zoomable  
+# Zoomable
 
-Easy zooming with dragging, double tap and dismiss gesture support for Jetpack Compose 
+![Build & test](https://github.com/mxalbert1996/Zoomable/actions/workflows/build.yml/badge.svg)
+
+Content zooming with dragging, double tap and dismiss gesture support for Jetpack Compose.
 
 https://user-images.githubusercontent.com/9391933/121725264-fc2c7d00-cb23-11eb-8442-bc6a07f0b4ba.mp4
 
