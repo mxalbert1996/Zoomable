@@ -1,6 +1,7 @@
 # Zoomable
 
 ![Build & test](https://github.com/mxalbert1996/Zoomable/actions/workflows/build.yml/badge.svg)
+[![Maven Central](https://img.shields.io/maven-central/v/com.mxalbert.zoomable/zoomable)](https://search.maven.org/artifact/com.mxalbert.zoomable/zoomable)
 
 Content zooming with dragging, double tap and dismiss gesture support for Jetpack Compose.
 
