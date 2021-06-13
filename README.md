@@ -15,7 +15,15 @@ Improvements and behavior changes compared to [the original version](https://git
 - Supports Twitter-like dismiss gesture.
 
 # Download
-TBD
+```Kotlin
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implemetation("com.mxalbert.zoomable:zoomable:<version>")
+}
+```
 
 # Usage
 Just wrap your composable with `Zoomable`!
