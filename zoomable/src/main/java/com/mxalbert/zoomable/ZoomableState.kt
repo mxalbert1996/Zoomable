@@ -22,9 +22,6 @@ import kotlin.math.sin
 /**
  * Create a [ZoomableState] that is remembered across compositions.
  *
- * Changes to the provided values for [minScale] and [maxScale] will **not** result
- * in the state being recreated or changed in any way if it has already been created.
- *
  * @param minScale The minimum [ZoomableState.scale] value.
  * @param maxScale The maximum [ZoomableState.scale] value.
  * @param doubleTapScale The [ZoomableState.scale] Value to animate to when a double tap happens.
