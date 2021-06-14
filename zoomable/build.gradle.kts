@@ -23,10 +23,6 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
-
-    packagingOptions {
-        resources.excludes += "META-INF/*"
-    }
 }
 
 dependencies {
