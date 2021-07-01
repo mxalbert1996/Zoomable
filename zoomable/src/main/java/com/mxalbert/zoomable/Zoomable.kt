@@ -76,10 +76,13 @@ fun Zoomable(
                     placeable.height / state.scale
                 )
                 layout(width, height) {
+                    // Uncommenting next line fixes the bug
+                    //state.dismissDragOffsetYState
                     placeable.place(
                         state.translationX.roundToInt() - state.boundOffset.x,
                         state.translationY.roundToInt() - state.boundOffset.y
-                                + state.dismissDragOffsetY.roundToInt()
+                                // Using `state.dismissDragOffsetYProperty` here fixes the bug
+                                + state.dismissDragOffsetYState.roundToInt()
                     )
                 }
             }

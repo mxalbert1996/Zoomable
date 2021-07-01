@@ -103,7 +103,7 @@ class ZoomableState(
     internal var dismissDragAbsoluteOffsetY by mutableStateOf(0f)
         private set
 
-    internal val dismissDragOffsetY: Float
+    internal val dismissDragOffsetYProperty: Float
         get() {
             val maxOffset = childSize.height
             return if (maxOffset == 0f) 0f else {
@@ -111,6 +111,14 @@ class ZoomableState(
                 maxOffset / DismissDragResistanceFactor * sin(progress * PI.toFloat() / 2)
             }
         }
+
+    internal val dismissDragOffsetYState by derivedStateOf {
+        val maxOffset = childSize.height
+        if (maxOffset == 0f) 0f else {
+            val progress = (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
+            maxOffset / DismissDragResistanceFactor * sin(progress * PI.toFloat() / 2)
+        }
+    }
 
     internal val shouldDismiss: Boolean
         get() = abs(dismissDragAbsoluteOffsetY) > childSize.height * DismissDragThreshold
