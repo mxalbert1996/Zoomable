@@ -23,6 +23,8 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
+    packagingOptions.resources.pickFirsts.add("META-INF/*")
 }
 
 dependencies {
@@ -32,6 +34,9 @@ dependencies {
     testImplementation(libs.jUnit)
     testImplementation(libs.truth)
     testImplementation(libs.coroutines.test)
+
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.compose.ui.test.manifest)
 }
 
 mavenPublish {
