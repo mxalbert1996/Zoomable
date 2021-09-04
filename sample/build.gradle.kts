@@ -31,4 +31,5 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.bundles.accompanist)
+    implementation(libs.coil.compose)
 }

@@ -13,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import com.google.accompanist.coil.rememberCoilPainter
-import com.google.accompanist.imageloading.ImageLoadState
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.ImagePainter
+import coil.compose.rememberImagePainter
+import coil.size.OriginalSize
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -42,14 +44,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 private fun Sample(onDismiss: () -> Unit) {
     HorizontalPager(state = rememberPagerState(pageCount = images.size)) { index ->
         val state = rememberZoomableState()
         var enabled by remember { mutableStateOf(true) }
         Box {
-            val painter = rememberCoilPainter(request = images[index])
+            val painter = rememberImagePainter(
+                data = images[index],
+                builder = { size(OriginalSize) }
+            )
             Zoomable(
                 state = state,
                 enabled = enabled,
@@ -59,7 +64,7 @@ private fun Sample(onDismiss: () -> Unit) {
                     false
                 }
             ) {
-                if (painter.loadState is ImageLoadState.Success) {
+                if (painter.state is ImagePainter.State.Success) {
                     val size = painter.intrinsicSize
                     Image(
                         painter = painter,
@@ -93,8 +98,8 @@ private fun Sample(onDismiss: () -> Unit) {
 }
 
 private val images = arrayOf(
-    "https://images.unsplash.com/photo-1623325780558-ef088d1e973b",
-    "https://images.unsplash.com/photo-1623267258448-46f7eaeebbc1",
-    "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e",
-    "https://images.unsplash.com/photo-1623396149135-94380a57f670"
+    "https://images.unsplash.com/photo-1623325780558-ef088d1e973b?w=2000&h=2000",
+    "https://images.unsplash.com/photo-1623267258448-46f7eaeebbc1?w=2000&h=2000",
+    "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=2000&h=2000",
+    "https://images.unsplash.com/photo-1623396149135-94380a57f670?w=2000&h=2000"
 )
