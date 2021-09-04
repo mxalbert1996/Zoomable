@@ -113,7 +113,7 @@ class ZoomableState(
         }
 
     internal val shouldDismiss: Boolean
-        get() = abs(dismissDragAbsoluteOffsetY) > childSize.height * DismissDragThreshold
+        get() = abs(dismissDragAbsoluteOffsetY) > size.height * DismissDragThreshold
 
     internal var size = IntSize.Zero
         set(value) {
@@ -304,7 +304,7 @@ class ZoomableState(
 }
 
 internal const val DismissDragResistanceFactor = 2f
-internal const val DismissDragThreshold = 0.75f
+internal const val DismissDragThreshold = 0.25f
 
 object ZoomableDefaults {
     /**
