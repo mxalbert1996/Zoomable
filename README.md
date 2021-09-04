@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implemetation("com.mxalbert.zoomable:zoomable:<version>")
+    implementation("com.mxalbert.zoomable:zoomable:<version>")
 }
 ```
 
