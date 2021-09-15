@@ -8,6 +8,14 @@ plugins {
 
 kotlin {
     explicitApi()
+    sourceSets {
+        test {
+            kotlin.srcDir("src/sharedTest/java")
+        }
+        androidTest {
+            kotlin.srcDir("src/sharedTest/java")
+        }
+    }
 }
 
 android {
@@ -23,6 +31,8 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
+    packagingOptions.resources.pickFirsts.add("META-INF/*")
 }
 
 dependencies {
@@ -32,6 +42,10 @@ dependencies {
     testImplementation(libs.jUnit)
     testImplementation(libs.truth)
     testImplementation(libs.coroutines.test)
+
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.compose.ui.test.manifest)
 }
 
 mavenPublish {
