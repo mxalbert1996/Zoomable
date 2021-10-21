@@ -26,9 +26,11 @@ import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import kotlin.coroutines.coroutineContext
 
 /**
  * Manages suspending pointer input for a single gesture detector, passed in
@@ -90,6 +92,15 @@ internal class SuspendingGestureTestUtil(
             // Pointer input effects will loop indefinitely; fully cancel them.
             recomposer.cancel()
         }
+    }
+
+    suspend fun frameClock(): TestFrameClock =
+        coroutineContext[MonotonicFrameClock] as TestFrameClock
+
+    suspend fun advanceTime(timeNanos: Long) {
+        val clock = frameClock()
+        clock.frame(0L)
+        clock.frame(timeNanos)
     }
 
     /**
@@ -299,13 +310,14 @@ internal class SuspendingGestureTestUtil(
 
     internal class TestFrameClock : MonotonicFrameClock {
 
-        private var frameTimeNanos = 0L
+        private val frameCh = Channel<Long>()
+
+        fun frame(frameTimeNanos: Long) {
+            frameCh.trySend(frameTimeNanos)
+        }
 
         override suspend fun <R> withFrameNanos(onFrame: (Long) -> R): R =
-            onFrame(frameTimeNanos).also {
-                // Advance time by 1s
-                frameTimeNanos += 1_000_000_000L
-            }
+            onFrame(frameCh.receive())
     }
 
     class EmptyApplier : Applier<Unit> {

@@ -12,6 +12,8 @@ import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.Velocity
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.PI
@@ -138,7 +140,7 @@ class ZoomableState(
     @get:FloatRange(from = 0.0)
     var scale: Float
         get() = _scale
-        internal set(value) {
+        private set(value) {
             _scale = value.coerceIn(minimumValue = minScale, maximumValue = maxScale)
             updateBounds()
         }
@@ -159,6 +161,10 @@ class ZoomableState(
 
     val isZooming: Boolean
         get() = scale > minScale && scale <= maxScale
+
+    private var flingJob: Job? = null
+    internal var isDragInProgress: Boolean = false
+        private set
 
     private fun updateBounds() {
         val offsetX = childSize.width * scale - size.width
@@ -229,10 +235,25 @@ class ZoomableState(
         }
     }
 
-    private suspend fun fling(velocity: Offset) = coroutineScope {
-        val spec = exponentialDecay<Float>()
-        launch { _translationX.animateDecay(initialVelocity = velocity.x, animationSpec = spec) }
-        launch { _translationY.animateDecay(initialVelocity = velocity.y, animationSpec = spec) }
+    private suspend fun fling(velocity: Velocity) {
+        coroutineScope {
+            flingJob = coroutineContext[Job]
+            val spec = exponentialDecay<Float>()
+            launch {
+                _translationX.animateDecay(initialVelocity = velocity.x, animationSpec = spec)
+            }
+            launch {
+                _translationY.animateDecay(initialVelocity = velocity.y, animationSpec = spec)
+            }
+        }
+
+        isDragInProgress = false
+        flingJob = null
+    }
+
+    internal fun onDragStart() {
+        flingJob?.cancel()
+        isDragInProgress = true
     }
 
     internal suspend fun onDrag(dragAmount: Offset) {
@@ -242,12 +263,8 @@ class ZoomableState(
 
     internal suspend fun onDragEnd() {
         val velocity = velocityTracker.calculateVelocity()
-        fling(Offset(velocity.x, velocity.y))
-    }
-
-    internal suspend fun onPress() {
-        _translationX.stop()
-        _translationY.stop()
+        velocityTracker.resetTracking()
+        fling(velocity)
     }
 
     internal fun onZoomChange(zoomChange: Float) {

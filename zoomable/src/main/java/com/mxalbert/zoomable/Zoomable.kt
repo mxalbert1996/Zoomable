@@ -42,7 +42,7 @@ fun Zoomable(
     val dismissGestureEnabledState = rememberUpdatedState(dismissGestureEnabled)
     val scope = rememberCoroutineScope()
     val gesturesModifier = if (!enabled) Modifier else Modifier
-        .pointerInput(Unit) {
+        .pointerInput(state) {
             detectTapAndDragGestures(
                 state = state,
                 dismissGestureEnabled = dismissGestureEnabledState,
@@ -109,9 +109,6 @@ internal suspend fun PointerInputScope.detectTapAndDragGestures(
                         }
                     )
                 }
-            },
-            onPress = {
-                state.onPress()
             }
         )
     }
@@ -119,14 +116,16 @@ internal suspend fun PointerInputScope.detectTapAndDragGestures(
         detectDragGestures(
             state = state,
             dismissGestureEnabled = dismissGestureEnabled,
+            startDragImmediately = { state.isDragInProgress },
+            onDragStart = {
+                state.onDragStart()
+                state.addPosition(it.uptimeMillis, it.position)
+            },
             onDrag = { change, dragAmount ->
                 if (state.isZooming) {
                     launch {
                         state.onDrag(dragAmount)
-                        state.addPosition(
-                            change.uptimeMillis,
-                            change.position
-                        )
+                        state.addPosition(change.uptimeMillis, change.position)
                     }
                 } else {
                     state.onDismissDrag(dragAmount.y)
@@ -159,6 +158,8 @@ internal suspend fun PointerInputScope.detectTapAndDragGestures(
 private suspend fun PointerInputScope.detectDragGestures(
     state: ZoomableState,
     dismissGestureEnabled: State<Boolean>,
+    startDragImmediately: () -> Boolean,
+    onDragStart: (PointerInputChange) -> Unit = {},
     onDragEnd: () -> Unit = {},
     onDragCancel: () -> Unit = {},
     onDrag: (change: PointerInputChange, dragAmount: Offset) -> Unit
@@ -170,9 +171,11 @@ private suspend fun PointerInputScope.detectDragGestures(
             if (state.isZooming || dismissGestureEnabled.value) {
                 var overSlop = Offset.Zero
                 val drag = if (state.isZooming) {
-                    awaitTouchSlopOrCancellation(down.id) { change, over ->
-                        change.consumePositionChange()
-                        overSlop = over
+                    if (startDragImmediately()) down else {
+                        awaitTouchSlopOrCancellation(down.id) { change, over ->
+                            change.consumePositionChange()
+                            overSlop = over
+                        }
                     }
                 } else {
                     awaitVerticalTouchSlopOrCancellation(down.id) { change, over ->
@@ -181,7 +184,8 @@ private suspend fun PointerInputScope.detectDragGestures(
                     }
                 }
                 if (drag != null) {
-                    onDrag(drag, overSlop)
+                    onDragStart(down)
+                    if (overSlop != Offset.Zero) onDrag(drag, overSlop)
                     if (
                         !drag(drag.id) {
                             onDrag(it, it.positionChange())

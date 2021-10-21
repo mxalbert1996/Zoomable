@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.anyChangeConsumed
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
@@ -133,8 +134,7 @@ class ZoomableTest {
         testTapAndDrag { scope ->
             with(scope) {
                 val center = size.toSize().center
-                down(center).up()
-                val secondTap = down(center, timeDiffMillis = 50).up()
+                val secondTap = doubleTap(center)
                 assertThat(state.scale).isEqualTo(ZoomableDefaults.DoubleTapScale)
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
@@ -147,8 +147,7 @@ class ZoomableTest {
     fun `Double tap at the top left to zoom in with translation change`() {
         testTapAndDrag { scope ->
             with(scope) {
-                down().up()
-                val secondTap = down(timeDiffMillis = 50).up()
+                val secondTap = doubleTap()
                 assertThat(state.scale).isEqualTo(ZoomableDefaults.DoubleTapScale)
                 assertThat(state.translationX).isEqualTo(50f)
                 assertThat(state.translationY).isEqualTo(50f)
@@ -162,8 +161,7 @@ class ZoomableTest {
         testTapAndDrag { scope ->
             with(scope) {
                 val center = size.toSize().center
-                down(center).up()
-                down(center, timeDiffMillis = 50).up()
+                doubleTap(center)
 
                 var drag = down().moveBy(Offset(0f, 18f))
                 assertThat(state.translationX).isEqualTo(0f)
@@ -190,17 +188,67 @@ class ZoomableTest {
     fun `Double tap to zoom out`() {
         testTapAndDrag { scope ->
             with(scope) {
-                down().up()
-                down(timeDiffMillis = 50).up()
-
-                down().up()
-                val secondTap = down(timeDiffMillis = 50).up()
+                doubleTap()
+                val secondTap = doubleTap()
                 assertThat(state.scale).isEqualTo(ZoomableDefaults.MinScale)
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(secondTap.consumed.downChange).isTrue()
             }
         }
+    }
+
+    @Test
+    fun Fling() {
+        testTapAndDrag { scope ->
+            with(scope) {
+                doubleTap()
+
+                val center = size.toSize().center
+                val singleMove = -center / 3f
+                down(center)
+                    .moveBy(singleMove)
+                    .moveBy(singleMove)
+                    .moveBy(singleMove)
+                    .up(timeDiffMillis = 0)
+                advanceTime(1_000_000_000)
+                assertThat(state.translationX).isEqualTo(-size.width / 2)
+                assertThat(state.translationY).isEqualTo(-size.height / 2)
+            }
+        }
+    }
+
+    @Test
+    fun `Start drag immediately when flinging`() {
+        testTapAndDrag { scope ->
+            with(scope) {
+                doubleTap()
+
+                val center = size.toSize().center
+                val singleMove = -center / 3f
+                down(center)
+                    .moveBy(singleMove)
+                    .moveBy(singleMove)
+                    .moveBy(singleMove)
+                    .up(timeDiffMillis = 0)
+                advanceTime(16_000_000)  // One frame
+                val translationX = state.translationX
+                val translationY = state.translationY
+                val drag = down().moveBy(Offset(10f, 10f))
+                assertThat(state.translationX).isEqualTo(translationX + 10f)
+                assertThat(state.translationY).isEqualTo(translationY + 10f)
+                drag.up()
+            }
+        }
+    }
+
+    private suspend fun SuspendingGestureTestUtil.doubleTap(
+        offset: Offset = Offset.Zero
+    ): PointerInputChange {
+        down(offset = offset).up()
+        val secondTap = down(offset = offset, timeDiffMillis = 50).up()
+        advanceTime(1_000_000_000)
+        return secondTap
     }
 
     private fun testTapAndDrag(

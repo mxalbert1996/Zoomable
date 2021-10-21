@@ -3,6 +3,7 @@ package com.mxalbert.zoomable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -31,7 +32,9 @@ class ZoomableAndroidTest {
         rule.setContent {
             WithTouchSlop(0f) {
                 Zoomable(
-                    modifier = Modifier.semantics { testTag = "Zoomable" },
+                    modifier = Modifier
+                        .size(300.dp)
+                        .semantics { testTag = "Zoomable" },
                     state = rememberZoomableState(doubleTapScale = 2f),
                     dismissGestureEnabled = true
                 ) {
@@ -92,8 +95,14 @@ class ZoomableAndroidTest {
         performGesture { doubleClick(position = Offset.Zero) }
         rule.waitForIdle()
 
-        performGesture { swipe(start = center, end = topLeft) }
-        rule.waitForIdle()
+        performGesture {
+            swipeWithVelocity(
+                start = center / 2f,
+                end = topLeft,
+                endVelocity = 5000f,
+                durationMillis = 25
+            )
+        }
         content
             .assertLeftPositionInRootIsEqualTo(-getUnclippedBoundsInRoot().width)
             .assertTopPositionInRootIsEqualTo(-getUnclippedBoundsInRoot().height)
