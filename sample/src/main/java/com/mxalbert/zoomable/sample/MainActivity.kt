@@ -21,7 +21,6 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import com.mxalbert.zoomable.Zoomable
 import com.mxalbert.zoomable.rememberZoomableState
 import kotlinx.coroutines.launch
@@ -47,14 +46,10 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 private fun Sample(onDismiss: () -> Unit) {
-    HorizontalPager(state = rememberPagerState(pageCount = images.size)) { index ->
+    HorizontalPager(count = images.size) { index ->
         val state = rememberZoomableState()
         var enabled by remember { mutableStateOf(true) }
         Box {
-            val painter = rememberImagePainter(
-                data = images[index],
-                builder = { size(OriginalSize) }
-            )
             Zoomable(
                 state = state,
                 enabled = enabled,
@@ -64,6 +59,7 @@ private fun Sample(onDismiss: () -> Unit) {
                     false
                 }
             ) {
+                val painter = rememberImagePainter(data = images[index]) { size(OriginalSize) }
                 if (painter.state is ImagePainter.State.Success) {
                     val size = painter.intrinsicSize
                     Image(
