@@ -76,11 +76,11 @@ fun Zoomable(
                     placeable.height / state.scale
                 )
                 layout(width, height) {
-                    placeable.placeWithLayer(0, 0) {
-                        translationX = state.translationX - state.boundOffset.x
-                        translationY =
-                            state.translationY - state.boundOffset.y + state.dismissDragOffsetY
-                    }
+                    placeable.placeWithLayer(
+                        state.translationX.roundToInt() - state.boundOffset.x,
+                        state.translationY.roundToInt() - state.boundOffset.y
+                                + state.dismissDragOffsetY.roundToInt()
+                    )
                 }
             }
     ) {
