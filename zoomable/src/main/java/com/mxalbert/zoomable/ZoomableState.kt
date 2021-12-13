@@ -27,6 +27,7 @@ import kotlin.math.sin
  * @param minScale The minimum [ZoomableState.scale] value.
  * @param maxScale The maximum [ZoomableState.scale] value.
  * @param doubleTapScale The [ZoomableState.scale] Value to animate to when a double tap happens.
+ * @param overZoomConfig The [OverZoomConfig] to use or null to disable over-zoom effect.
  * @param initialScale The initial value for [ZoomableState.scale].
  * @param initialTranslationX The initial value for [ZoomableState.translationX].
  * @param initialTranslationY The initial value for [ZoomableState.translationY].
@@ -36,6 +37,7 @@ fun rememberZoomableState(
     @FloatRange(from = 0.0) minScale: Float = ZoomableDefaults.MinScale,
     @FloatRange(from = 0.0) maxScale: Float = ZoomableDefaults.MaxScale,
     @FloatRange(from = 0.0) doubleTapScale: Float = ZoomableDefaults.DoubleTapScale,
+    overZoomConfig: OverZoomConfig? = null,
     @FloatRange(from = 0.0) initialScale: Float = minScale,
     @FloatRange(from = 0.0) initialTranslationX: Float = 0f,
     @FloatRange(from = 0.0) initialTranslationY: Float = 0f
@@ -46,6 +48,7 @@ fun rememberZoomableState(
         this.minScale = minScale
         this.maxScale = maxScale
         this.doubleTapScale = doubleTapScale
+        this.overZoomConfig = overZoomConfig
     }
 }
 
@@ -86,6 +89,8 @@ class ZoomableState(
                 scale = scale  // Make sure scale is in range
             }
         }
+
+    var overZoomConfig: OverZoomConfig? by mutableStateOf(null)
 
     /**
      * The [scale] value to animate to when a double tap happens.
@@ -339,3 +344,40 @@ object ZoomableDefaults {
      */
     const val DoubleTapScale = 2f
 }
+
+/**
+ * Configuration for over-zoom effect.
+ *
+ * @property minSnapScale The minimum [ZoomableState.scale] value to snap to after a zoom gesture
+ * finishes.
+ * @property maxSnapScale The maximum [ZoomableState.scale] value to snap to after a zoom gesture
+ * finishes.
+ */
+@Immutable
+class OverZoomConfig(
+    @FloatRange(from = 0.0) val minSnapScale: Float,
+    @FloatRange(from = 0.0) val maxSnapScale: Float
+) {
+    operator fun contains(scale: Float): Boolean = scale in minSnapScale..maxSnapScale
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as OverZoomConfig
+
+        if (minSnapScale != other.minSnapScale) return false
+        if (maxSnapScale != other.maxSnapScale) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = minSnapScale.hashCode()
+        result = 31 * result + maxSnapScale.hashCode()
+        return result
+    }
+}
+
+internal val OverZoomConfig.range: ClosedFloatingPointRange<Float>
+    get() = minSnapScale..maxSnapScale

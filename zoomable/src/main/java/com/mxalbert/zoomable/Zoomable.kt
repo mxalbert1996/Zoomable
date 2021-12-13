@@ -2,10 +2,7 @@ package com.mxalbert.zoomable
 
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -41,22 +38,37 @@ fun Zoomable(
 ) {
     val dismissGestureEnabledState = rememberUpdatedState(dismissGestureEnabled)
     val scope = rememberCoroutineScope()
-    val gesturesModifier = if (!enabled) Modifier else Modifier
-        .pointerInput(state) {
-            detectTapAndDragGestures(
-                state = state,
-                dismissGestureEnabled = dismissGestureEnabledState,
-                onDismiss = onDismiss
-            )
-        }
-        .transformable(state = rememberTransformableState { zoomChange, panChange, _ ->
+    val gesturesModifier = if (!enabled) Modifier else {
+        val transformableState = rememberTransformableState { zoomChange, panChange, _ ->
             if (state.dismissDragAbsoluteOffsetY == 0f) {
                 scope.launch {
                     state.onZoomChange(zoomChange)
                     state.onDrag(panChange)
                 }
             }
-        })
+        }
+
+        LaunchedEffect(transformableState.isTransformInProgress, state.overZoomConfig) {
+            if (!transformableState.isTransformInProgress) {
+                val range = state.overZoomConfig?.range
+                if (range?.contains(state.scale) == false) {
+                    scope.launch {
+                        transformableState.animateZoomBy(state.scale.coerceIn(range) / state.scale)
+                    }
+                }
+            }
+        }
+
+        Modifier
+            .pointerInput(state) {
+                detectTapAndDragGestures(
+                    state = state,
+                    dismissGestureEnabled = dismissGestureEnabledState,
+                    onDismiss = onDismiss
+                )
+            }
+            .transformable(state = transformableState)
+    }
 
     Box(
         modifier = modifier
