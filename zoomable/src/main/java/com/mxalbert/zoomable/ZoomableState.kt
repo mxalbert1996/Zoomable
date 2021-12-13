@@ -1,5 +1,6 @@
 package com.mxalbert.zoomable
 
+import androidx.annotation.FloatRange
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
@@ -32,12 +33,12 @@ import kotlin.math.sin
  */
 @Composable
 fun rememberZoomableState(
-  minScale: Float = ZoomableDefaults.MinScale,
-  maxScale: Float = ZoomableDefaults.MaxScale,
-  doubleTapScale: Float = ZoomableDefaults.DoubleTapScale,
-  initialScale: Float = ZoomableDefaults.DefaultScale,
-  initialTranslationX: Float = 0f,
-  initialTranslationY: Float = 0f
+  @FloatRange(from = 0.0) minScale: Float = ZoomableDefaults.MinScale,
+  @FloatRange(from = 0.0) maxScale: Float = ZoomableDefaults.MaxScale,
+  @FloatRange(from = 0.0) doubleTapScale: Float = ZoomableDefaults.DoubleTapScale,
+  @FloatRange(from = 0.0) initialScale: Float = ZoomableDefaults.DefaultScale,
+  @FloatRange(from = 0.0) initialTranslationX: Float = 0f,
+  @FloatRange(from = 0.0) initialTranslationY: Float = 0f
 ): ZoomableState {
   return rememberSaveable(saver = ZoomableState.Saver) {
     ZoomableState(initialScale, initialTranslationX, initialTranslationY)
@@ -58,14 +59,14 @@ fun rememberZoomableState(
  */
 @Stable
 class ZoomableState(
-  initialScale: Float = ZoomableDefaults.DefaultScale,
-  initialTranslationX: Float = 0f,
-  initialTranslationY: Float = 0f
+  @FloatRange(from = 0.0) initialScale: Float = ZoomableDefaults.MinScale,
+  @FloatRange(from = 0.0) initialTranslationX: Float = 0f,
+  @FloatRange(from = 0.0) initialTranslationY: Float = 0f
 ) {
   /**
    * The minimum [scale] value.
    */
-
+  @FloatRange(from = 0.0)
   var minScale: Float = ZoomableDefaults.MinScale
     set(value) {
       if (field != value) {
@@ -77,7 +78,7 @@ class ZoomableState(
   /**
    * The maximum [scale] value.
    */
-
+  @FloatRange(from = 0.0)
   var maxScale: Float = ZoomableDefaults.MaxScale
     set(value) {
       if (field != value) {
@@ -89,7 +90,7 @@ class ZoomableState(
   /**
    * The [scale] value to animate to when a double tap happens.
    */
-
+  @FloatRange(from = 0.0)
   var doubleTapScale: Float = ZoomableDefaults.DoubleTapScale
 
   private val velocityTracker = VelocityTracker()
@@ -136,7 +137,7 @@ class ZoomableState(
   /**
    * Current scale of [Zoomable].
    */
-
+  @get:FloatRange(from = 0.0)
   var scale: Float
     get() = _scale
     private set(value) {
@@ -147,14 +148,14 @@ class ZoomableState(
   /**
    * Current translationX of [Zoomable].
    */
-
+  @get:FloatRange(from = 0.0)
   val translationX: Float
     get() = _translationX.value
 
   /**
    * Current translationY of [Zoomable].
    */
-
+  @get:FloatRange(from = 0.0)
   val translationY: Float
     get() = _translationY.value
 
@@ -292,7 +293,9 @@ class ZoomableState(
   }
 
   override fun toString(): String =
-    "ZoomableState(translateX=$translationX,translateY=$translationY,scale=$scale)"
+    "ZoomableState(translateX=%.1f,translateY=%.1f,scale=%.2f)".format(
+      translationX, translationY, scale
+    )
 
   companion object {
     /**
@@ -329,7 +332,7 @@ object ZoomableDefaults {
   /**
    * The default value for [ZoomableState.minScale].
    */
-  const val MinScale = 1 / 4f
+  const val MinScale =  1 / 4f
 
   /**
    * The default value for [ZoomableState.maxScale].

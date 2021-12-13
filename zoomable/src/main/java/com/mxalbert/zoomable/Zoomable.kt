@@ -115,7 +115,7 @@ internal suspend fun PointerInputScope.detectTapAndDragGestures(
             }
           )
         }
-      },
+      }
     )
   }
   launch {
