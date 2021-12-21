@@ -114,6 +114,18 @@ class ZoomableState(
             }
         }
 
+    /**
+     * Current dismiss drag offset of [Zoomable].
+     *
+     * Can be used to animate translucency of Composable via
+     * [androidx.compose.ui.graphics.GraphicsLayerScope.alpha] property in
+     * the [androidx.compose.ui.graphics.graphicsLayer].
+     */
+    val dismissDragOffset: Float by derivedStateOf {
+        val maxOffset = childSize.height
+        (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
+    }
+
     internal val shouldDismiss: Boolean
         get() = abs(dismissDragAbsoluteOffsetY) > size.height * DismissDragThreshold
 
