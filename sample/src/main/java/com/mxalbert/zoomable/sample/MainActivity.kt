@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import coil.annotation.ExperimentalCoilApi
@@ -24,6 +25,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.mxalbert.zoomable.Zoomable
 import com.mxalbert.zoomable.rememberZoomableState
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +70,7 @@ private fun Sample(onDismiss: () -> Unit) {
                         modifier = Modifier
                             .aspectRatio(size.width / size.height)
                             .fillMaxSize()
+                            .graphicsLayer { alpha = 1 - abs(state.dismissDragOffset) }
                     )
                 }
             }
@@ -81,6 +84,10 @@ private fun Sample(onDismiss: () -> Unit) {
                 Checkbox(checked = enabled, onCheckedChange = { enabled = it })
                 Text(text = "Enable")
                 Spacer(modifier = Modifier.weight(1f))
+
+                Text(text = abs(state.dismissDragOffset).toString())
+                Spacer(modifier = Modifier.weight(1f))
+
                 Button(onClick = {
                     scope.launch {
                         state.animateTranslateTo(Offset.Zero)
