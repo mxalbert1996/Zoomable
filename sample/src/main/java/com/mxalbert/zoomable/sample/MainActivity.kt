@@ -6,11 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import coil.annotation.ExperimentalCoilApi
@@ -21,6 +23,7 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.mxalbert.zoomable.OverZoomConfig
 import com.mxalbert.zoomable.Zoomable
 import com.mxalbert.zoomable.rememberZoomableState
 import kotlinx.coroutines.launch
@@ -47,8 +50,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun Sample(onDismiss: () -> Unit) {
     HorizontalPager(count = images.size) { index ->
-        val state = rememberZoomableState()
         var enabled by remember { mutableStateOf(true) }
+        var overZoom by remember { mutableStateOf(false) }
+        val state = rememberZoomableState(
+            minScale = if (overZoom) 0.5f else 1f,
+            maxScale = if (overZoom) 6f else 4f,
+            overZoomConfig = if (overZoom) OverZoomConfig(1f, 4f) else null
+        )
         Box {
             Zoomable(
                 state = state,
@@ -78,8 +86,38 @@ private fun Sample(onDismiss: () -> Unit) {
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = enabled, onCheckedChange = { enabled = it })
-                Text(text = "Enable")
+                Column {
+                    Row(
+                        modifier = Modifier.toggleable(
+                            value = enabled,
+                            role = Role.Switch,
+                            onValueChange = { enabled = it }
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = enabled,
+                            onCheckedChange = null,
+                            modifier = Modifier.padding(2.dp)
+                        )
+                        Text(text = "Enable", modifier = Modifier.padding(2.dp))
+                    }
+                    Row(
+                        modifier = Modifier.toggleable(
+                            value = overZoom,
+                            role = Role.Switch,
+                            onValueChange = { overZoom = it }
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = overZoom,
+                            onCheckedChange = null,
+                            modifier = Modifier.padding(2.dp)
+                        )
+                        Text(text = "Enable over-zoom", modifier = Modifier.padding(2.dp))
+                    }
+                }
                 Spacer(modifier = Modifier.weight(1f))
                 Button(onClick = {
                     scope.launch {
