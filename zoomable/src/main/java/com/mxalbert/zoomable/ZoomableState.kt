@@ -16,10 +16,7 @@ import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.roundToInt
-import kotlin.math.sin
+import kotlin.math.*
 
 /**
  * Create a [ZoomableState] that is remembered across compositions.
@@ -164,8 +161,11 @@ class ZoomableState(
     val translationY: Float
         get() = _translationY.value
 
+    internal val minSnapScale: Float
+        get() = max(minScale, overZoomConfig?.minSnapScale ?: 0f)
+
     val isZooming: Boolean
-        get() = scale > minScale && scale <= maxScale
+        get() = scale > minSnapScale && scale <= maxScale
 
     private var flingJob: Job? = null
     internal var isDragInProgress: Boolean = false

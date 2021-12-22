@@ -52,9 +52,7 @@ fun Zoomable(
             if (!transformableState.isTransformInProgress) {
                 val range = state.overZoomConfig?.range
                 if (range?.contains(state.scale) == false) {
-                    scope.launch {
-                        transformableState.animateZoomBy(state.scale.coerceIn(range) / state.scale)
-                    }
+                    state.animateScaleTo(state.scale.coerceIn(range))
                 }
             }
         }
@@ -110,8 +108,7 @@ internal suspend fun PointerInputScope.detectTapAndDragGestures(
             onDoubleTap = { offset ->
                 launch {
                     val isZooming = state.isZooming
-                    val targetScale =
-                        if (isZooming) state.minScale else state.doubleTapScale
+                    val targetScale = if (isZooming) state.minSnapScale else state.doubleTapScale
                     state.animateScaleTo(
                         targetScale = targetScale,
                         targetTranslation = if (isZooming) {

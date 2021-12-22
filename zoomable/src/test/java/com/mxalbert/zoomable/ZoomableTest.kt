@@ -199,6 +199,20 @@ class ZoomableTest {
     }
 
     @Test
+    fun `Double tap to zoom out with over-zoom enabled`() {
+        testTapAndDrag(overZoom = true) { scope ->
+            with(scope) {
+                doubleTap()
+                val secondTap = doubleTap()
+                assertThat(state.scale).isEqualTo(ZoomableDefaults.MinScale)
+                assertThat(state.translationX).isEqualTo(0f)
+                assertThat(state.translationY).isEqualTo(0f)
+                assertThat(secondTap.consumed.downChange).isTrue()
+            }
+        }
+    }
+
+    @Test
     fun Fling() {
         testTapAndDrag { scope ->
             with(scope) {
@@ -252,11 +266,18 @@ class ZoomableTest {
     }
 
     private fun testTapAndDrag(
+        overZoom: Boolean = false,
         block: suspend SuspendingGestureTestUtil.(TestTapAndDragScope) -> Unit
     ) {
         val size = IntSize(100, 100)
         val scope = TestTapAndDragScope(
             state = ZoomableState().apply {
+                if (overZoom) {
+                    minScale = ZoomableDefaults.MinScale / 2
+                    maxScale = ZoomableDefaults.MaxScale * 1.5f
+                    overZoomConfig =
+                        OverZoomConfig(ZoomableDefaults.MinScale, ZoomableDefaults.MaxScale)
+                }
                 this.size = size
                 this.childSize = size.toSize()
             },
