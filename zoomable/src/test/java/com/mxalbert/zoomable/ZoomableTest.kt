@@ -78,6 +78,7 @@ class ZoomableTest {
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(0f)
+                assertThat(state.dismissDragProgress).isEqualTo(0f)
                 assertThat(state.dismissDragOffsetY).isEqualTo(0f)
                 assertThat(verticalSwipe.consumed.positionChange).isTrue()
                 verticalSwipe = verticalSwipe.moveBy(Offset(0f, 150f))
@@ -90,9 +91,25 @@ class ZoomableTest {
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(dismissThreshold)
+                assertThat(state.dismissDragProgress).isEqualTo(1f)
                 assertThat(verticalSwipe.consumed.positionChange).isTrue()
                 verticalSwipe.up()
                 assertThat(dismissed).isFalse()
+            }
+        }
+    }
+
+    @Test
+    fun `Dismiss frag progress is always positive`() {
+        testTapAndDrag { scope ->
+            with(scope) {
+                dismissGestureEnabled.value = true
+                val dismissThreshold = size.height * DismissDragThreshold
+                var verticalSwipe = down().moveBy(Offset(0f, -18f))
+                assertThat(state.dismissDragProgress).isEqualTo(0f)
+                verticalSwipe = verticalSwipe.moveBy(Offset(0f, -dismissThreshold))
+                assertThat(state.dismissDragProgress).isEqualTo(1f)
+                verticalSwipe.up()
             }
         }
     }

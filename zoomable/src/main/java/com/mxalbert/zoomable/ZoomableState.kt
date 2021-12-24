@@ -101,11 +101,8 @@ class ZoomableState(
      */
     @get:FloatRange(from = 0.0, to = 1.0)
     val dismissDragProgress: Float
-        get() {
-            val maxOffset = childSize.height
-            return if (maxOffset == 0f) 0f else
-                (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
-        }
+        get() = if (size.height == 0) 0f else
+            abs(dismissDragAbsoluteOffsetY) / (size.height * DismissDragThreshold)
 
     private val velocityTracker = VelocityTracker()
     private var _scale by mutableStateOf(initialScale)
@@ -121,9 +118,11 @@ class ZoomableState(
 
     internal val dismissDragOffsetY: Float
         get() {
-            val progress = dismissDragProgress
-            return if (progress == 0f) 0f else
+            val maxOffset = childSize.height
+            return if (maxOffset == 0f) 0f else {
+                val progress = (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
                 childSize.height / DismissDragResistanceFactor * sin(progress * PI.toFloat() / 2)
+            }
         }
 
     internal val shouldDismiss: Boolean
