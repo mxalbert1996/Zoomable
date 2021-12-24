@@ -95,6 +95,18 @@ class ZoomableState(
     @FloatRange(from = 0.0)
     var doubleTapScale: Float = ZoomableDefaults.DoubleTapScale
 
+    /**
+     * Current progress of the dismiss drag ranging from 0.0 to 1.0.
+     * Useful e.g. if you want to animate the alpha of the content.
+     */
+    @get:FloatRange(from = 0.0, to = 1.0)
+    val dismissDragProgress: Float
+        get() {
+            val maxOffset = childSize.height
+            return if (maxOffset == 0f) 0f else
+                (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
+        }
+
     private val velocityTracker = VelocityTracker()
     private var _scale by mutableStateOf(initialScale)
     private var _translationX = Animatable(initialTranslationX)
@@ -109,11 +121,9 @@ class ZoomableState(
 
     internal val dismissDragOffsetY: Float
         get() {
-            val maxOffset = childSize.height
-            return if (maxOffset == 0f) 0f else {
-                val progress = (dismissDragAbsoluteOffsetY / maxOffset).coerceIn(-1f, 1f)
-                maxOffset / DismissDragResistanceFactor * sin(progress * PI.toFloat() / 2)
-            }
+            val progress = dismissDragProgress
+            return if (progress == 0f) 0f else
+                childSize.height / DismissDragResistanceFactor * sin(progress * PI.toFloat() / 2)
         }
 
     internal val shouldDismiss: Boolean
