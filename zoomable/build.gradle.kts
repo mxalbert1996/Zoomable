@@ -3,6 +3,7 @@ import com.vanniktech.maven.publish.SonatypeHost
 plugins {
     id("com.android.library")
     kotlin("android")
+    alias(libs.plugins.kotlin.binaryCompatibilityValidator)
     id("com.vanniktech.maven.publish")
 }
 

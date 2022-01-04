@@ -298,10 +298,6 @@ class ZoomableState(
         fling(velocity)
     }
 
-    internal fun onZoomChange(zoomChange: Float) {
-        scale *= zoomChange
-    }
-
     internal fun addPosition(timeMillis: Long, position: Offset) {
         velocityTracker.addPosition(timeMillis = timeMillis, position = position)
     }

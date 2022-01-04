@@ -40,3 +40,6 @@ espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "esp
 [bundles]
 compose = ["compose-foundation", "compose-material"]
 accompanist = ["accompanist-insets", "accompanist-pager"]
+
+[plugins]
+kotlin-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.8.0" }

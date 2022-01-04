@@ -1,21 +1,54 @@
-public final class moe/tlaster/zoomable/Zoomable {
-	public static final fun Zoomable (Lmoe/tlaster/zoomable/ZoomableState;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+public final class com/mxalbert/zoomable/OverZoomConfig {
+	public fun <init> (FF)V
+	public final fun contains (F)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMaxSnapScale ()F
+	public final fun getMinSnapScale ()F
+	public fun hashCode ()I
 }
 
-public final class moe/tlaster/zoomable/ZoomableState {
-	public static final field Companion Lmoe/tlaster/zoomable/ZoomableState$Companion;
-	public fun <init> (IIF)V
-	public synthetic fun <init> (IIFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+public final class com/mxalbert/zoomable/ZoomableDefaults {
+	public static final field $stable I
+	public static final field DoubleTapScale F
+	public static final field INSTANCE Lcom/mxalbert/zoomable/ZoomableDefaults;
+	public static final field MaxScale F
+	public static final field MinScale F
+}
+
+public final class com/mxalbert/zoomable/ZoomableKt {
+	public static final fun Zoomable (Landroidx/compose/ui/Modifier;Lcom/mxalbert/zoomable/ZoomableState;ZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class com/mxalbert/zoomable/ZoomableState {
+	public static final field Companion Lcom/mxalbert/zoomable/ZoomableState$Companion;
+	public fun <init> ()V
+	public fun <init> (FFF)V
+	public synthetic fun <init> (FFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun animateScaleTo-ubNVwUQ (FJLandroidx/compose/animation/core/AnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun animateScaleTo-ubNVwUQ$default (Lcom/mxalbert/zoomable/ZoomableState;FJLandroidx/compose/animation/core/AnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun animateTranslateTo-9KIMszo (JLandroidx/compose/animation/core/AnimationSpec;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun animateTranslateTo-9KIMszo$default (Lcom/mxalbert/zoomable/ZoomableState;JLandroidx/compose/animation/core/AnimationSpec;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun getDismissDragProgress ()F
+	public final fun getDoubleTapScale ()F
+	public final fun getMaxScale ()F
+	public final fun getMinScale ()F
+	public final fun getOverZoomConfig ()Lcom/mxalbert/zoomable/OverZoomConfig;
 	public final fun getScale ()F
-	public final fun getTranslateY ()F
-	public final fun getTranslateX ()F
+	public final fun getTranslationX ()F
+	public final fun getTranslationY ()F
+	public final fun isZooming ()Z
+	public final fun setDoubleTapScale (F)V
+	public final fun setMaxScale (F)V
+	public final fun setMinScale (F)V
+	public final fun setOverZoomConfig (Lcom/mxalbert/zoomable/OverZoomConfig;)V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class moe/tlaster/zoomable/ZoomableState$Companion {
+public final class com/mxalbert/zoomable/ZoomableState$Companion {
 	public final fun getSaver ()Landroidx/compose/runtime/saveable/Saver;
 }
 
-public final class moe/tlaster/zoomable/ZoomableStateKt {
-	public static final fun rememberZoomableState (IIFLandroidx/compose/runtime/Composer;II)Lmoe/tlaster/zoomable/ZoomableState;
+public final class com/mxalbert/zoomable/ZoomableStateKt {
+	public static final fun rememberZoomableState (FFFLcom/mxalbert/zoomable/OverZoomConfig;FFFLandroidx/compose/runtime/Composer;II)Lcom/mxalbert/zoomable/ZoomableState;
 }
+
