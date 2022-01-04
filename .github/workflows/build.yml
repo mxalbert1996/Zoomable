@@ -2,10 +2,10 @@ name: Build & test
 
 on:
   push:
+    branches:
+      - '**'
     paths-ignore:
       - '**.md'
-    tags-ignore:
-      - '**'
   pull_request:
     paths-ignore:
       - '**.md'
