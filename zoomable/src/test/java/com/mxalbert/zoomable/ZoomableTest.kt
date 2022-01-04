@@ -303,7 +303,7 @@ class ZoomableTest {
             dismissed = false
         )
         SuspendingGestureTestUtil(width = size.width, height = size.height) {
-            detectTapAndDragGestures(scope.state, scope.dismissGestureEnabled) {
+            detectZoomableGestures(scope.state, scope.dismissGestureEnabled) {
                 scope.dismissed = true
                 false
             }

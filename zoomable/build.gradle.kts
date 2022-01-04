@@ -38,6 +38,7 @@ android {
 dependencies {
     implementation(libs.coroutines.core)
     implementation(libs.compose.foundation)
+    implementation(libs.compose.ui.util)
 
     testImplementation(libs.jUnit)
     testImplementation(libs.truth)

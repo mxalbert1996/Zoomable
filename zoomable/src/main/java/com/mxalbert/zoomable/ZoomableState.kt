@@ -8,11 +8,13 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -177,7 +179,7 @@ class ZoomableState(
         get() = scale > minSnapScale && scale <= maxScale
 
     private var flingJob: Job? = null
-    internal var isDragInProgress: Boolean = false
+    internal var isGestureInProgress: Boolean by mutableStateOf(false)
         private set
 
     private fun updateBounds() {
@@ -189,6 +191,9 @@ class ZoomableState(
         _translationX.updateBounds(-maxX, maxX)
         _translationY.updateBounds(-maxY, maxY)
     }
+
+    internal fun calculateTargetTranslation(centroid: Offset): Offset =
+        (size.toSize().center + Offset(translationX, translationY) - centroid) / scale
 
     /**
      * Animate [scale] to [targetScale].
@@ -261,13 +266,25 @@ class ZoomableState(
             }
         }
 
-        isDragInProgress = false
+        isGestureInProgress = false
         flingJob = null
     }
 
-    internal fun onDragStart() {
+    internal fun onGestureStart() {
         flingJob?.cancel()
-        isDragInProgress = true
+        isGestureInProgress = true
+    }
+
+    internal suspend fun onTransform(centroid: Offset, pan: Offset, zoom: Float) {
+        var targetTranslation = calculateTargetTranslation(centroid - pan)
+        scale *= zoom
+        targetTranslation = targetTranslation * scale - size.toSize().center + centroid
+        _translationX.snapTo(targetTranslation.x)
+        _translationY.snapTo(targetTranslation.y)
+    }
+
+    internal fun onTransformEnd() {
+        isGestureInProgress = false
     }
 
     internal suspend fun onDrag(dragAmount: Offset) {
