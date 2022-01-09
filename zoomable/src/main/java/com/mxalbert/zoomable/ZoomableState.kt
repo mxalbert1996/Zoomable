@@ -183,10 +183,16 @@ class ZoomableState(
         private set
 
     internal fun isMaxX(changeOffset: Offset): Boolean {
-        if (!sameDirection(changeOffset.x, translationX)) { return false }
+        val difference: Int = (abs(translationX) - boundOffset.x.coerceAtLeast(0)).roundToInt()
 
-        val diff = abs(translationX) - boundOffset.x.coerceAtLeast(0)
-        return  diff >= -1 && diff <= 1
+        val isDragSameDirection = sameDirection(changeOffset.x, translationX);
+        val horizontalDragAffectsBound = translationX.roundToInt() != 0
+
+        if ((horizontalDragAffectsBound && !isDragSameDirection) || difference != 0) {
+            return false
+        }
+
+        return  difference >= -1 && difference <= 1
     }
 
     private fun updateBounds() {
