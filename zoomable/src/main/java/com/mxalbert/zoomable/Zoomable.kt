@@ -186,7 +186,7 @@ private suspend fun PointerInputScope.detectDragGestures(
                 val drag = if (state.isZooming) {
                     if (startDragImmediately()) down else {
                         awaitTouchSlopOrCancellation(down.id) { change, over ->
-                            if (state.isMaxX(change)) {
+                            if (state.isMaxX(change.positionChange())) {
                                 return@awaitTouchSlopOrCancellation
                             }
                             change.consumePositionChange()

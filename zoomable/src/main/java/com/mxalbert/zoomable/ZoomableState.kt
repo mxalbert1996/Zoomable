@@ -10,8 +10,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.geometry.lerp
-import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -184,8 +182,8 @@ class ZoomableState(
     internal var isGestureInProgress: Boolean by mutableStateOf(false)
         private set
 
-    internal fun isMaxX(change: PointerInputChange): Boolean {
-        if (!sameDirection(change.positionChange().x, translationX)) { return false }
+    internal fun isMaxX(changeOffset: Offset): Boolean {
+        if (!sameDirection(changeOffset.x, translationX)) { return false }
 
         val diff = abs(translationX) - boundOffset.x.coerceAtLeast(0)
         return  diff >= -1 && diff <= 1
