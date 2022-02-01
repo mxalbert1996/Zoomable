@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
@@ -28,6 +29,7 @@ import com.mxalbert.zoomable.Zoomable
 import com.mxalbert.zoomable.rememberZoomableState
 import kotlinx.coroutines.launch
 
+@ExperimentalAnimationApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +48,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalAnimationApi
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
 @Composable
 private fun Sample(onDismiss: () -> Unit) {
     HorizontalPager(count = images.size) { index ->
         var enabled by remember { mutableStateOf(true) }
         var overZoom by remember { mutableStateOf(false) }
+        var isOverlayVisible by remember { mutableStateOf(true) }
         val state = rememberZoomableState(
             minScale = if (overZoom) 0.5f else 1f,
             maxScale = if (overZoom) 6f else 4f,
@@ -61,6 +65,7 @@ private fun Sample(onDismiss: () -> Unit) {
             Zoomable(
                 state = state,
                 enabled = enabled,
+                onTap = { isOverlayVisible = !isOverlayVisible },
                 dismissGestureEnabled = true,
                 onDismiss = {
                     onDismiss()
@@ -79,52 +84,60 @@ private fun Sample(onDismiss: () -> Unit) {
                     )
                 }
             }
-            val scope = rememberCoroutineScope()
-            Row(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+
+            AnimatedVisibility(
+                visible = isOverlayVisible,
+                enter = slideInVertically() + fadeIn(),
+                exit = slideOutVertically() + fadeOut(),
             ) {
-                Column {
-                    Row(
-                        modifier = Modifier.toggleable(
-                            value = enabled,
-                            role = Role.Switch,
-                            onValueChange = { enabled = it }
-                        ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = enabled,
-                            onCheckedChange = null,
-                            modifier = Modifier.padding(2.dp)
-                        )
-                        Text(text = "Enable", modifier = Modifier.padding(2.dp))
+
+                val scope = rememberCoroutineScope()
+                Row(
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier.toggleable(
+                                value = enabled,
+                                role = Role.Switch,
+                                onValueChange = { enabled = it }
+                            ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = enabled,
+                                onCheckedChange = null,
+                                modifier = Modifier.padding(2.dp)
+                            )
+                            Text(text = "Enable", modifier = Modifier.padding(2.dp))
+                        }
+                        Row(
+                            modifier = Modifier.toggleable(
+                                value = overZoom,
+                                role = Role.Switch,
+                                onValueChange = { overZoom = it }
+                            ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = overZoom,
+                                onCheckedChange = null,
+                                modifier = Modifier.padding(2.dp)
+                            )
+                            Text(text = "Enable over-zoom", modifier = Modifier.padding(2.dp))
+                        }
                     }
-                    Row(
-                        modifier = Modifier.toggleable(
-                            value = overZoom,
-                            role = Role.Switch,
-                            onValueChange = { overZoom = it }
-                        ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = overZoom,
-                            onCheckedChange = null,
-                            modifier = Modifier.padding(2.dp)
-                        )
-                        Text(text = "Enable over-zoom", modifier = Modifier.padding(2.dp))
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(onClick = {
+                        scope.launch {
+                            state.animateTranslateTo(Offset.Zero)
+                        }
+                    }) {
+                        Text(text = "Center")
                     }
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = {
-                    scope.launch {
-                        state.animateTranslateTo(Offset.Zero)
-                    }
-                }) {
-                    Text(text = "Center")
                 }
             }
         }
