@@ -9,6 +9,7 @@ import androidx.compose.ui.input.pointer.anyChangeConsumed
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.delay
 import org.junit.Test
 
 @Suppress("TestFunctionName")
@@ -36,6 +37,17 @@ class ZoomableTest {
         assertThat(state.scale).isEqualTo(2f)
         assertThat(state.translationX).isEqualTo(100f)
         assertThat(state.translationY).isEqualTo(100f)
+    }
+
+    @Test
+    fun `Single tap`() {
+        testTapAndDrag { scope ->
+            with(scope) {
+                down().up()
+                delay(doubleTapTimeoutMillis)
+                assertThat(tapped).isTrue()
+            }
+        }
     }
 
     @Test
@@ -299,13 +311,12 @@ class ZoomableTest {
                 this.childSize = size.toSize()
             },
             size = size,
-            dismissGestureEnabled = mutableStateOf(false),
-            dismissed = false
+            dismissGestureEnabled = mutableStateOf(false)
         )
         SuspendingGestureTestUtil(width = size.width, height = size.height) {
             detectZoomableGestures(
                 state = scope.state,
-                onTap = null,
+                onTap = { scope.tapped = true },
                 dismissGestureEnabled = scope.dismissGestureEnabled
             ) {
                 scope.dismissed = true
@@ -319,8 +330,10 @@ class ZoomableTest {
     private class TestTapAndDragScope(
         val state: ZoomableState,
         val size: IntSize,
-        val dismissGestureEnabled: MutableState<Boolean>,
-        var dismissed: Boolean
-    )
+        val dismissGestureEnabled: MutableState<Boolean>
+    ) {
+        var tapped: Boolean = false
+        var dismissed: Boolean = false
+    }
 
 }
