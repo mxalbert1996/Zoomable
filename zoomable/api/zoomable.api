@@ -16,7 +16,7 @@ public final class com/mxalbert/zoomable/ZoomableDefaults {
 }
 
 public final class com/mxalbert/zoomable/ZoomableKt {
-	public static final fun Zoomable (Landroidx/compose/ui/Modifier;Lcom/mxalbert/zoomable/ZoomableState;ZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Zoomable (Landroidx/compose/ui/Modifier;Lcom/mxalbert/zoomable/ZoomableState;ZLkotlin/jvm/functions/Function1;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class com/mxalbert/zoomable/ZoomableState {
