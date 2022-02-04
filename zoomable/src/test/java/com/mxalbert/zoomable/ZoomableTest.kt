@@ -54,7 +54,7 @@ class ZoomableTest {
     fun `Vertical swipe not consumed when dismissGestureEnabled is false`() {
         testTapAndDrag { scope ->
             with(scope) {
-                val verticalSwipe = down().moveBy(Offset(0f, 18f))
+                val verticalSwipe = down().moveBy(Offset(0f, touchSlop))
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(0f)
@@ -69,7 +69,7 @@ class ZoomableTest {
     fun `Horizontal swipe not consumed when dismissGestureEnabled is false`() {
         testTapAndDrag { scope ->
             with(scope) {
-                val horizontalSwipe = down().moveBy(Offset(18f, 0f))
+                val horizontalSwipe = down().moveBy(Offset(touchSlop, 0f))
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(0f)
@@ -86,7 +86,7 @@ class ZoomableTest {
             with(scope) {
                 dismissGestureEnabled.value = true
                 val dismissThreshold = size.height * DismissDragThreshold
-                var verticalSwipe = down().moveBy(Offset(0f, 18f))
+                var verticalSwipe = down().moveBy(Offset(0f, touchSlop))
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(0f)
@@ -117,7 +117,7 @@ class ZoomableTest {
             with(scope) {
                 dismissGestureEnabled.value = true
                 val dismissThreshold = size.height * DismissDragThreshold
-                var verticalSwipe = down().moveBy(Offset(0f, -18f))
+                var verticalSwipe = down().moveBy(Offset(0f, -touchSlop))
                 assertThat(state.dismissDragProgress).isEqualTo(0f)
                 verticalSwipe = verticalSwipe.moveBy(Offset(0f, -dismissThreshold))
                 assertThat(state.dismissDragProgress).isEqualTo(1f)
@@ -132,7 +132,7 @@ class ZoomableTest {
             with(scope) {
                 dismissGestureEnabled.value = true
                 val dismissThreshold = size.height * DismissDragThreshold
-                val verticalSwipe = down().moveBy(Offset(0f, 18f))
+                val verticalSwipe = down().moveBy(Offset(0f, touchSlop))
                     .moveBy(Offset(0f, dismissThreshold + 1f))
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(dismissThreshold + 1f)
                 assertThat(verticalSwipe.consumed.positionChange).isTrue()
@@ -147,7 +147,7 @@ class ZoomableTest {
         testTapAndDrag { scope ->
             with(scope) {
                 dismissGestureEnabled.value = true
-                val horizontalSwipe = down().moveBy(Offset(18f, 0f))
+                val horizontalSwipe = down().moveBy(Offset(touchSlop, 0f))
                 assertThat(state.scale).isEqualTo(ZoomableDefaults.MinScale)
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
@@ -192,7 +192,7 @@ class ZoomableTest {
                 val center = size.toSize().center
                 doubleTap(center)
 
-                var drag = down().moveBy(Offset(0f, 18f))
+                var drag = down().moveBy(Offset(0f, touchSlop))
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(drag.consumed.positionChange).isTrue()
