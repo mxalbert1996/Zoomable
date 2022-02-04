@@ -29,7 +29,6 @@ import com.mxalbert.zoomable.Zoomable
 import com.mxalbert.zoomable.rememberZoomableState
 import kotlinx.coroutines.launch
 
-@ExperimentalAnimationApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +47,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@ExperimentalAnimationApi
-@OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class, ExperimentalAnimationApi::class)
 @Composable
 private fun Sample(onDismiss: () -> Unit) {
     HorizontalPager(count = images.size) { index ->
@@ -87,10 +85,9 @@ private fun Sample(onDismiss: () -> Unit) {
 
             AnimatedVisibility(
                 visible = isOverlayVisible,
-                enter = slideInVertically() + fadeIn(),
-                exit = slideOutVertically() + fadeOut(),
+                enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
             ) {
-
                 val scope = rememberCoroutineScope()
                 Row(
                     modifier = Modifier

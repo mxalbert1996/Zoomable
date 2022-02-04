@@ -305,7 +305,7 @@ class ZoomableTest {
         SuspendingGestureTestUtil(width = size.width, height = size.height) {
             detectZoomableGestures(
                 state = scope.state,
-                onTap = {},
+                onTap = null,
                 dismissGestureEnabled = scope.dismissGestureEnabled
             ) {
                 scope.dismissed = true
