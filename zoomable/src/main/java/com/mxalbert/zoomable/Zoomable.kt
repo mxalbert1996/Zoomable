@@ -25,6 +25,7 @@ import kotlin.math.roundToInt
  * @param modifier The modifier to apply to this layout.
  * @param state The state object to be used to control or observe the state.
  * @param enabled Controls the enabled state. When false, all gestures will be ignored.
+ * @param onTap Will be called when a single tap is detected.
  * @param dismissGestureEnabled Whether to enable dismiss gesture detection.
  * @param onDismiss Will be called when dismiss gesture is detected. Should return a boolean
  * indicating whether the dismiss request is handled.
@@ -35,6 +36,7 @@ fun Zoomable(
     modifier: Modifier = Modifier,
     state: ZoomableState = rememberZoomableState(),
     enabled: Boolean = true,
+    onTap: ((Offset) -> Unit)? = null,
     dismissGestureEnabled: Boolean = false,
     onDismiss: () -> Boolean = { false },
     content: @Composable () -> Unit
@@ -53,6 +55,7 @@ fun Zoomable(
         Modifier.pointerInput(state) {
             detectZoomableGestures(
                 state = state,
+                onTap = onTap,
                 dismissGestureEnabled = dismissGestureEnabledState,
                 onDismiss = onDismiss
             )
@@ -91,11 +94,13 @@ fun Zoomable(
 
 internal suspend fun PointerInputScope.detectZoomableGestures(
     state: ZoomableState,
+    onTap: ((Offset) -> Unit)?,
     dismissGestureEnabled: State<Boolean>,
     onDismiss: () -> Boolean
 ): Unit = coroutineScope {
     launch {
         detectTapGestures(
+            onTap = onTap,
             onDoubleTap = { offset ->
                 launch {
                     val isZooming = state.isZooming

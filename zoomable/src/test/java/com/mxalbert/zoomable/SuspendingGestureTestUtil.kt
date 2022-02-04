@@ -23,6 +23,7 @@ import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.materialize
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,8 +41,9 @@ import kotlin.coroutines.coroutineContext
 internal class SuspendingGestureTestUtil(
     val width: Int = 10,
     val height: Int = 10,
+    private val viewConfiguration: ViewConfiguration = TestViewConfiguration(),
     private val gestureDetector: suspend PointerInputScope.() -> Unit,
-) {
+) : ViewConfiguration by viewConfiguration {
     private var nextPointerId = 0L
     private val activePointers = mutableMapOf<PointerId, PointerInputChange>()
     private var pointerInputFilter: PointerInputFilter? = null
@@ -80,7 +82,7 @@ internal class SuspendingGestureTestUtil(
             compose(recomposer) {
                 CompositionLocalProvider(
                     LocalDensity provides Density(1f),
-                    LocalViewConfiguration provides TestViewConfiguration()
+                    LocalViewConfiguration provides viewConfiguration
                 ) {
                     pointerInputFilter = currentComposer
                         .materialize(Modifier.pointerInput(Unit, gestureDetector)) as
