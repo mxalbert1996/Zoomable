@@ -44,7 +44,7 @@ class ZoomableTest {
         testTapAndDrag { scope ->
             with(scope) {
                 down().up()
-                delay(doubleTapTimeoutMillis)
+                delay(doubleTapTimeoutMillis + 1)
                 assertThat(tapped).isTrue()
             }
         }

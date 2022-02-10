@@ -55,7 +55,7 @@ class ZoomableAndroidTest {
 
     @Test
     fun doubleTapGesture() = test { content ->
-        performGesture { doubleClick(position = Offset.Zero) }
+        performTouchInput { doubleClick(position = Offset.Zero) }
         rule.waitForIdle()
         content
             .assertLeftPositionInRootIsEqualTo(0.dp)
@@ -67,11 +67,11 @@ class ZoomableAndroidTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun panGesture() = test { content ->
-        performGesture { doubleClick(position = Offset.Zero) }
+        performTouchInput { doubleClick(position = Offset.Zero) }
         rule.waitForIdle()
 
         val distance = with(rule.density) { 10.dp.toPx() }
-        performGesture {
+        performTouchInput {
             down(Offset(centerX, centerY))
             moveBy(Offset(-distance, 0f))
         }
@@ -79,12 +79,12 @@ class ZoomableAndroidTest {
             .assertLeftPositionInRootIsEqualTo((-10).dp)
             .assertTopPositionInRootIsEqualTo(0.dp)
 
-        performGesture { moveBy(Offset(0f, -distance)) }
+        performTouchInput { moveBy(Offset(0f, -distance)) }
         content
             .assertLeftPositionInRootIsEqualTo((-10).dp)
             .assertTopPositionInRootIsEqualTo((-10).dp)
 
-        performGesture { moveBy(Offset(-distance, -distance)) }
+        performTouchInput { moveBy(Offset(-distance, -distance)) }
         content
             .assertLeftPositionInRootIsEqualTo((-20).dp)
             .assertTopPositionInRootIsEqualTo((-20).dp)
@@ -92,15 +92,14 @@ class ZoomableAndroidTest {
 
     @Test
     fun flingAfterPanGesture() = test { content ->
-        performGesture { doubleClick(position = Offset.Zero) }
+        performTouchInput { doubleClick(position = Offset.Zero) }
         rule.waitForIdle()
 
-        performGesture {
+        performTouchInput {
             swipeWithVelocity(
                 start = center / 2f,
                 end = topLeft,
-                endVelocity = 5000f,
-                durationMillis = 25
+                endVelocity = 5000f
             )
         }
         content
@@ -111,7 +110,7 @@ class ZoomableAndroidTest {
     @Test
     fun swipeToDismissGesture() = test { content ->
         val distance = with(rule.density) { 10.dp.toPx() }
-        performGesture {
+        performTouchInput {
             down(Offset(centerX, centerY))
             moveBy(Offset(0f, distance))
         }
