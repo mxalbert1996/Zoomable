@@ -25,6 +25,23 @@ dependencies {
 }
 ```
 
+<details>
+  <summary>Snapshot builds</summary>
+
+[Snapshot versions](https://s01.oss.sonatype.org/content/repositories/snapshots/com/mxalbert/zoomable/zoomable/) are available at Sonatype OSSRH's snapshot repository. These are updated on every commit to `main`.
+To use it:
+```Kotlin
+repositories {
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots")  // build.gradle.kts
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }  // build.gradle
+}
+
+dependencies {
+    implementation("com.mxalbert.zoomable:zoomable:<version>-SNAPSHOT")
+}
+```
+</details>
+
 # Usage
 Just wrap your composable with `Zoomable`!
 
