@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
@@ -50,8 +51,11 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class, ExperimentalAnimationApi::class)
 @Composable
-private fun Sample(onDismiss: () -> Unit) {
-    HorizontalPager(count = images.size) { index ->
+private fun Sample(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    HorizontalPager(count = images.size, modifier = modifier) { index ->
         var enabled by remember { mutableStateOf(true) }
         var overZoom by remember { mutableStateOf(false) }
         var fadeOut by remember { mutableStateOf(false) }
@@ -95,6 +99,7 @@ private fun Sample(onDismiss: () -> Unit) {
                 val scope = rememberCoroutineScope()
                 Row(
                     modifier = Modifier
+                        .background(MaterialTheme.colors.surface.copy(alpha = 0.3f))
                         .statusBarsPadding()
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
