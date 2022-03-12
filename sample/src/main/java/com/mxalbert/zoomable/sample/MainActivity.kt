@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -49,10 +51,14 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class, ExperimentalAnimationApi::class)
 @Composable
-private fun Sample(onDismiss: () -> Unit) {
-    HorizontalPager(count = images.size) { index ->
+private fun Sample(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    HorizontalPager(count = images.size, modifier = modifier) { index ->
         var enabled by remember { mutableStateOf(true) }
         var overZoom by remember { mutableStateOf(false) }
+        var fadeOut by remember { mutableStateOf(false) }
         var isOverlayVisible by remember { mutableStateOf(true) }
         val state = rememberZoomableState(
             minScale = if (overZoom) 0.5f else 1f,
@@ -61,6 +67,8 @@ private fun Sample(onDismiss: () -> Unit) {
         )
         Box {
             Zoomable(
+                modifier = if (!fadeOut) Modifier else
+                    Modifier.graphicsLayer { alpha = 1 - state.dismissDragProgress },
                 state = state,
                 enabled = enabled,
                 onTap = { isOverlayVisible = !isOverlayVisible },
@@ -91,43 +99,28 @@ private fun Sample(onDismiss: () -> Unit) {
                 val scope = rememberCoroutineScope()
                 Row(
                     modifier = Modifier
+                        .background(MaterialTheme.colors.surface.copy(alpha = 0.3f))
                         .statusBarsPadding()
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
-                        Row(
-                            modifier = Modifier.toggleable(
-                                value = enabled,
-                                role = Role.Switch,
-                                onValueChange = { enabled = it }
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = enabled,
-                                onCheckedChange = null,
-                                modifier = Modifier.padding(2.dp)
-                            )
-                            Text(text = "Enable", modifier = Modifier.padding(2.dp))
-                        }
-                        Row(
-                            modifier = Modifier.toggleable(
-                                value = overZoom,
-                                role = Role.Switch,
-                                onValueChange = { overZoom = it }
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = overZoom,
-                                onCheckedChange = null,
-                                modifier = Modifier.padding(2.dp)
-                            )
-                            Text(text = "Enable over-zoom", modifier = Modifier.padding(2.dp))
-                        }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Checkbox(
+                            text = "Enable",
+                            checked = enabled,
+                            onCheckedChange = { enabled = it }
+                        )
+                        Checkbox(
+                            text = "Enable over-zoom",
+                            checked = overZoom,
+                            onCheckedChange = { overZoom = it }
+                        )
+                        Checkbox(
+                            text = "Enable fade-out when dismissed",
+                            checked = fadeOut,
+                            onCheckedChange = { fadeOut = it }
+                        )
                     }
-                    Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = {
                         scope.launch {
                             state.animateTranslateTo(Offset.Zero)
@@ -138,6 +131,30 @@ private fun Sample(onDismiss: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun Checkbox(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.toggleable(
+            value = checked,
+            role = Role.Switch,
+            onValueChange = onCheckedChange
+        ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = null,
+            modifier = Modifier.padding(2.dp)
+        )
+        Text(text = text, modifier = Modifier.padding(2.dp))
     }
 }
 

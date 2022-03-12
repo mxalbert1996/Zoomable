@@ -102,14 +102,16 @@ class ZoomableState(
      * Useful e.g. if you want to animate the alpha of the content.
      */
     @get:FloatRange(from = 0.0, to = 1.0)
-    val dismissDragProgress: Float
-        get() = if (size.height == 0) 0f else
+    val dismissDragProgress: Float by derivedStateOf {
+        if (size.height == 0) 0f else
             abs(dismissDragAbsoluteOffsetY) / (size.height * DismissDragThreshold)
+    }
 
     private val velocityTracker = VelocityTracker()
     private var _scale by mutableStateOf(initialScale)
     private var _translationX = Animatable(initialTranslationX)
     private var _translationY = Animatable(initialTranslationY)
+    private var _size by mutableStateOf(IntSize.Zero)
     private var _childSize by mutableStateOf(Size.Zero)
 
     internal var boundOffset by mutableStateOf(IntOffset.Zero)
@@ -129,10 +131,11 @@ class ZoomableState(
     internal val shouldDismiss: Boolean
         get() = abs(dismissDragAbsoluteOffsetY) > size.height * DismissDragThreshold
 
-    internal var size = IntSize.Zero
+    internal var size: IntSize
+        get() = _size
         set(value) {
-            if (field != value) {
-                field = value
+            if (_size != value) {
+                _size = value
                 updateBounds()
             }
         }
