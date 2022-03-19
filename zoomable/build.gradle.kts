@@ -1,11 +1,14 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
-    id("com.android.library")
     kotlin("multiplatform")
-    id("org.jetbrains.compose")
+    id("com.android.library")
+    alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.binaryCompatibilityValidator)
-    id("com.vanniktech.maven.publish")
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.maven.publish)
 }
 
 kotlin {
@@ -81,8 +84,13 @@ android {
     packagingOptions.resources.pickFirsts.add("META-INF/*")
 }
 
-mavenPublish {
-    sonatypeHost = SonatypeHost.S01
+mavenPublishing {
+    group = project.property("GROUP") ?: group
+    version = project.property("VERSION_NAME") ?: version
+    publishToMavenCentral(SonatypeHost.S01)
+    signAllPublications()
+    pomFromGradleProperties()
+    configure(KotlinMultiplatform(JavadocJar.Dokka("dokkaHtml")))
 }
 
 publishing {

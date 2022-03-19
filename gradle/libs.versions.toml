@@ -4,6 +4,7 @@ sdk-min = "21"
 sdk-target = "31"
 sdk-compile = "31"
 buildTools = "32.0.0"
+binaryCompatibilityValidator = "0.8.0"
 maven-publish = "0.19.0"
 kotlin = "1.6.10"
 coroutines = "1.6.0"
@@ -20,8 +21,6 @@ espresso = "3.2.0"
 [libraries]
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-compose-gradle = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-jetbrains" }
-maven-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "maven-publish" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -47,4 +46,7 @@ espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "esp
 accompanist = ["accompanist-insets", "accompanist-pager"]
 
 [plugins]
-kotlin-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version = "0.8.0" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-jetbrains" }
+kotlin-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
+maven-publish = { id = "com.vanniktech.maven.publish.base", version.ref = "maven-publish" }
