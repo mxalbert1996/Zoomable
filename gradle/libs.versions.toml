@@ -1,5 +1,5 @@
 [versions]
-agp = "7.0.4"
+agp = "7.1.2"
 sdk-min = "21"
 sdk-target = "31"
 sdk-compile = "31"
