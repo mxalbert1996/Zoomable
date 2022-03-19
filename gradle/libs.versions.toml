@@ -1,13 +1,14 @@
 [versions]
-agp = "7.1.2"
+agp = "7.0.4"
 sdk-min = "21"
 sdk-target = "31"
 sdk-compile = "31"
 buildTools = "32.0.0"
-maven-publish = "0.18.0"
+maven-publish = "0.19.0"
 kotlin = "1.6.10"
 coroutines = "1.6.0"
-compose = "1.1.1"
+compose-jetbrains = "1.1.1"
+compose-jetpack = "1.1.1"
 androidx-activity = "1.4.0"
 accompanist = "0.23.1"
 coil = "1.4.0"
@@ -19,15 +20,20 @@ espresso = "3.2.0"
 [libraries]
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+compose-gradle = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-jetbrains" }
 maven-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "maven-publish" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "compose" }
-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
+compose-runtime-jetbrains = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-jetbrains" }
+compose-runtime-jetpack = { module = "androidx.compose.runtime:runtime", version.ref = "compose-jetpack" }
+compose-foundation-jetbrains = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-jetbrains" }
+compose-foundation-jetpack = { module = "androidx.compose.foundation:foundation", version.ref = "compose-jetpack" }
+compose-ui-util-jetbrains = { module = "org.jetbrains.compose.ui:ui-util", version.ref = "compose-jetbrains" }
+compose-ui-util-jetpack = { module = "androidx.compose.ui:ui-util", version.ref = "compose-jetpack" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "compose-jetpack" }
+compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-jetpack" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-jetpack" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
@@ -38,7 +44,6 @@ testExt = { module = "androidx.test.ext:junit", version.ref = "testExt" }
 espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 
 [bundles]
-compose = ["compose-foundation", "compose-material"]
 accompanist = ["accompanist-insets", "accompanist-pager"]
 
 [plugins]

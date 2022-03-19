@@ -27,4 +27,4 @@ jobs:
           java-version: 11
 
       - name: Build and test
-        run: ./gradlew assemble apiCheck testDebug
+        run: ./gradlew assemble apiCheck jvmTest

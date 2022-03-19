@@ -2,19 +2,63 @@ import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     id("com.android.library")
-    kotlin("android")
+    kotlin("multiplatform")
+    id("org.jetbrains.compose")
     alias(libs.plugins.kotlin.binaryCompatibilityValidator)
     id("com.vanniktech.maven.publish")
 }
 
 kotlin {
-    explicitApi()
+    android {
+        publishLibraryVariants("release")
+    }
+    jvm()
     sourceSets {
-        test {
-            kotlin.srcDir("src/sharedTest/java")
+        val commonMain by getting {
+            dependencies {
+                compileOnly(libs.compose.runtime.jetbrains)
+                compileOnly(libs.compose.foundation.jetbrains)
+                compileOnly(libs.compose.ui.util.jetbrains)
+            }
         }
-        androidTest {
-            kotlin.srcDir("src/sharedTest/java")
+        val commonTest by getting
+        val jvmMain by getting {
+            dependencies {
+                compileOnly(libs.compose.runtime.jetbrains)
+                implementation(libs.compose.foundation.jetbrains)
+                implementation(libs.compose.ui.util.jetbrains)
+            }
+        }
+        val jvmTest by getting {
+            dependsOn(commonTest)
+            dependencies {
+                implementation(libs.jUnit)
+                implementation(libs.truth)
+                implementation(libs.coroutines.test)
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                compileOnly(libs.compose.runtime.jetpack)
+                implementation(libs.compose.foundation.jetpack)
+                implementation(libs.compose.ui.util.jetpack)
+            }
+        }
+        val androidAndroidTest by getting {
+            dependsOn(commonTest)
+            dependencies {
+                implementation(libs.truth)
+                implementation(libs.compose.ui.test.junit4)
+                implementation(libs.compose.ui.test.manifest)
+            }
+        }
+        removeAll { sourceSet ->
+            sourceSet.name in setOf(
+                "androidAndroidTestRelease",
+                "androidTestFixtures",
+                "androidTestFixturesDebug",
+                "androidTestFixturesRelease",
+            )
         }
     }
 }
@@ -22,6 +66,7 @@ kotlin {
 android {
     compileSdk = libs.versions.sdk.compile.get().toInt()
     buildToolsVersion = libs.versions.buildTools.get()
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
         minSdk = libs.versions.sdk.min.get().toInt()
@@ -34,20 +79,6 @@ android {
     }
 
     packagingOptions.resources.pickFirsts.add("META-INF/*")
-}
-
-dependencies {
-    implementation(libs.coroutines.core)
-    implementation(libs.compose.foundation)
-    implementation(libs.compose.ui.util)
-
-    testImplementation(libs.jUnit)
-    testImplementation(libs.truth)
-    testImplementation(libs.coroutines.test)
-
-    androidTestImplementation(libs.truth)
-    androidTestImplementation(libs.compose.ui.test.junit4)
-    androidTestImplementation(libs.compose.ui.test.manifest)
 }
 
 mavenPublish {
