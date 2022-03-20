@@ -313,7 +313,9 @@ class ZoomableState(
         }
     }
 
-    override fun toString(): String = "ZoomableState(translateX=$translationX,translateY=$translationY,scale=$scale)"
+    override fun toString(): String =
+        "ZoomableState(translateX=${translationX.roundToTenths()}, " +
+                "translateY=${translationY.roundToTenths()}, scale=${scale.roundToTenths()})"
 
     companion object {
         /**
@@ -383,8 +385,22 @@ class OverZoomConfig(
         return result
     }
 
-    override fun toString(): String = "OverZoomConfig($minSnapScale..$maxSnapScale)"
+    override fun toString(): String =
+        "OverZoomConfig(${minSnapScale.roundToTenths()}..${maxSnapScale.roundToTenths()})"
 }
 
 internal val OverZoomConfig.range: ClosedFloatingPointRange<Float>
     get() = minSnapScale..maxSnapScale
+
+private fun Float.roundToTenths(): Float {
+    val shifted = this * 10
+    val decimal = shifted - shifted.toInt()
+    // Kotlin's round operator rounds 0.5f down to 0. Manually compare against
+    // 0.5f and round up if necessary
+    val roundedShifted = if (decimal >= 0.5f) {
+        shifted.toInt() + 1
+    } else {
+        shifted.toInt()
+    }
+    return roundedShifted.toFloat() / 10
+}
