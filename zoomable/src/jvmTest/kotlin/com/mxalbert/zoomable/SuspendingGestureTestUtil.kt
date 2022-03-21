@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import kotlin.coroutines.coroutineContext
@@ -62,7 +63,7 @@ internal class SuspendingGestureTestUtil(
         check(!isExecuting) { "executeInComposition is not reentrant" }
         try {
             isExecuting = true
-            runBlockingTest {
+            runTest(UnconfinedTestDispatcher()) {
                 val frameClock = TestFrameClock()
 
                 withContext(frameClock) {
@@ -242,6 +243,14 @@ internal class SuspendingGestureTestUtil(
         final,
         initial
     )
+
+    /**
+     * Removes all pointers from the active pointers. This can simulate a faulty pointer stream
+     * for robustness testing.
+     */
+    fun clearPointerStream() {
+        activePointers.clear()
+    }
 
     /**
      * Updates all changes so that all events are at the current time.

@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.android.build.api.dsl.CommonExtension as AndroidCommonExtension
+
 buildscript {
     repositories {
         google()
@@ -6,32 +9,26 @@ buildscript {
     dependencies {
         classpath(libs.agp)
         classpath(libs.kotlin.gradle)
-        classpath(libs.maven.publish)
     }
 }
 
 subprojects {
     afterEvaluate {
-        extensions.findByType(com.android.build.api.dsl.CommonExtension::class)?.apply {
+        extensions.findByType(AndroidCommonExtension::class)?.apply {
             buildFeatures {
                 buildConfig = false
-                compose = true
             }
 
             compileOptions {
                 sourceCompatibility = JavaVersion.VERSION_1_8
                 targetCompatibility = JavaVersion.VERSION_1_8
             }
-
-            composeOptions {
-                kotlinCompilerExtensionVersion = libs.versions.compose.get()
-            }
         }
 
-        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        tasks.withType<KotlinCompile> {
             kotlinOptions {
                 jvmTarget = JavaVersion.VERSION_1_8.toString()
-                freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+                freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
             }
         }
     }

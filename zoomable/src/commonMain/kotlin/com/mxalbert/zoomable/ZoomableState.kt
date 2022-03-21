@@ -1,6 +1,5 @@
 package com.mxalbert.zoomable
 
-import androidx.annotation.FloatRange
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
@@ -33,13 +32,13 @@ import kotlin.math.*
  */
 @Composable
 fun rememberZoomableState(
-    @FloatRange(from = 0.0) minScale: Float = ZoomableDefaults.MinScale,
-    @FloatRange(from = 0.0) maxScale: Float = ZoomableDefaults.MaxScale,
-    @FloatRange(from = 0.0) doubleTapScale: Float = ZoomableDefaults.DoubleTapScale,
+    minScale: Float = ZoomableDefaults.MinScale,
+    maxScale: Float = ZoomableDefaults.MaxScale,
+    doubleTapScale: Float = ZoomableDefaults.DoubleTapScale,
     overZoomConfig: OverZoomConfig? = null,
-    @FloatRange(from = 0.0) initialScale: Float = minScale,
-    @FloatRange(from = 0.0) initialTranslationX: Float = 0f,
-    @FloatRange(from = 0.0) initialTranslationY: Float = 0f
+    initialScale: Float = minScale,
+    initialTranslationX: Float = 0f,
+    initialTranslationY: Float = 0f
 ): ZoomableState {
     return rememberSaveable(saver = ZoomableState.Saver) {
         ZoomableState(initialScale, initialTranslationX, initialTranslationY)
@@ -61,14 +60,13 @@ fun rememberZoomableState(
  */
 @Stable
 class ZoomableState(
-    @FloatRange(from = 0.0) initialScale: Float = ZoomableDefaults.MinScale,
-    @FloatRange(from = 0.0) initialTranslationX: Float = 0f,
-    @FloatRange(from = 0.0) initialTranslationY: Float = 0f
+    initialScale: Float = ZoomableDefaults.MinScale,
+    initialTranslationX: Float = 0f,
+    initialTranslationY: Float = 0f
 ) {
     /**
      * The minimum [scale] value.
      */
-    @FloatRange(from = 0.0)
     var minScale: Float = ZoomableDefaults.MinScale
         set(value) {
             if (field != value) {
@@ -80,7 +78,6 @@ class ZoomableState(
     /**
      * The maximum [scale] value.
      */
-    @FloatRange(from = 0.0)
     var maxScale: Float = ZoomableDefaults.MaxScale
         set(value) {
             if (field != value) {
@@ -94,14 +91,12 @@ class ZoomableState(
     /**
      * The [scale] value to animate to when a double tap happens.
      */
-    @FloatRange(from = 0.0)
     var doubleTapScale: Float = ZoomableDefaults.DoubleTapScale
 
     /**
      * Current progress of the dismiss drag ranging from 0.0 to 1.0.
      * Useful e.g. if you want to animate the alpha of the content.
      */
-    @get:FloatRange(from = 0.0, to = 1.0)
     val dismissDragProgress: Float by derivedStateOf {
         if (size.height == 0) 0f else
             abs(dismissDragAbsoluteOffsetY) / (size.height * DismissDragThreshold)
@@ -152,7 +147,6 @@ class ZoomableState(
     /**
      * Current scale of [Zoomable].
      */
-    @get:FloatRange(from = 0.0)
     var scale: Float
         get() = _scale
         private set(value) {
@@ -163,14 +157,12 @@ class ZoomableState(
     /**
      * Current translationX of [Zoomable].
      */
-    @get:FloatRange(from = 0.0)
     val translationX: Float
         get() = _translationX.value
 
     /**
      * Current translationY of [Zoomable].
      */
-    @get:FloatRange(from = 0.0)
     val translationY: Float
         get() = _translationY.value
 
@@ -322,9 +314,8 @@ class ZoomableState(
     }
 
     override fun toString(): String =
-        "ZoomableState(translateX=%.1f,translateY=%.1f,scale=%.2f)".format(
-            translationX, translationY, scale
-        )
+        "ZoomableState(translateX=${translationX.roundToTenths()}, " +
+                "translateY=${translationY.roundToTenths()}, scale=${scale.roundToTenths()})"
 
     companion object {
         /**
@@ -379,29 +370,37 @@ object ZoomableDefaults {
  */
 @Immutable
 class OverZoomConfig(
-    @FloatRange(from = 0.0) val minSnapScale: Float,
-    @FloatRange(from = 0.0) val maxSnapScale: Float
+    val minSnapScale: Float,
+    val maxSnapScale: Float
 ) {
     operator fun contains(scale: Float): Boolean = scale in minSnapScale..maxSnapScale
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as OverZoomConfig
-
-        if (minSnapScale != other.minSnapScale) return false
-        if (maxSnapScale != other.maxSnapScale) return false
-
-        return true
-    }
+    override fun equals(other: Any?): Boolean =
+        this === other || other is OverZoomConfig &&
+                minSnapScale == other.minSnapScale && maxSnapScale == other.maxSnapScale
 
     override fun hashCode(): Int {
         var result = minSnapScale.hashCode()
         result = 31 * result + maxSnapScale.hashCode()
         return result
     }
+
+    override fun toString(): String =
+        "OverZoomConfig(${minSnapScale.roundToTenths()}..${maxSnapScale.roundToTenths()})"
 }
 
 internal val OverZoomConfig.range: ClosedFloatingPointRange<Float>
     get() = minSnapScale..maxSnapScale
+
+private fun Float.roundToTenths(): Float {
+    val shifted = this * 10
+    val decimal = shifted - shifted.toInt()
+    // Kotlin's round operator rounds 0.5f down to 0. Manually compare against
+    // 0.5f and round up if necessary
+    val roundedShifted = if (decimal >= 0.5f) {
+        shifted.toInt() + 1
+    } else {
+        shifted.toInt()
+    }
+    return roundedShifted.toFloat() / 10
+}

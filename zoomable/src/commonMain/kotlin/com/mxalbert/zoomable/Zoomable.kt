@@ -29,7 +29,7 @@ import kotlin.math.roundToInt
  * @param dismissGestureEnabled Whether to enable dismiss gesture detection.
  * @param onDismiss Will be called when dismiss gesture is detected. Should return a boolean
  * indicating whether the dismiss request is handled.
- * @param content a block which describes the content.
+ * @param content The block which describes the content.
  */
 @Composable
 fun Zoomable(
