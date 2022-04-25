@@ -3,7 +3,8 @@
 ![Build & test](https://github.com/mxalbert1996/Zoomable/actions/workflows/build.yml/badge.svg)
 [![Maven Central](https://img.shields.io/maven-central/v/com.mxalbert.zoomable/zoomable)](https://search.maven.org/artifact/com.mxalbert.zoomable/zoomable)
 
-Content zooming with dragging, double tap and dismiss gesture support for Jetpack Compose.
+Content zooming with dragging, double tap and dismiss gesture support for Compose.
+Supports Jetpack Compose and Compose for Desktop.
 
 https://user-images.githubusercontent.com/9391933/121725264-fc2c7d00-cb23-11eb-8442-bc6a07f0b4ba.mp4
 
