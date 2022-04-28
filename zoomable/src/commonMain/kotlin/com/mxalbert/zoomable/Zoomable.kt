@@ -43,52 +43,16 @@ fun Zoomable(
     onDismiss: () -> Boolean = { false },
     content: @Composable () -> Unit
 ) {
-    val dismissGestureEnabledState = rememberUpdatedState(dismissGestureEnabled)
-    val gesturesModifier = if (!enabled) Modifier else {
-        LaunchedEffect(state.isGestureInProgress, state.overZoomConfig) {
-            if (!state.isGestureInProgress) {
-                val range = state.overZoomConfig?.range
-                if (range?.contains(state.scale) == false) {
-                    state.animateScaleTo(state.scale.coerceIn(range))
-                }
-            }
-        }
-
-        Modifier.pointerInput(state) {
-            detectZoomableGestures(
-                state = state,
-                onTap = onTap,
-                dismissGestureEnabled = dismissGestureEnabledState,
-                onDismiss = onDismiss
-            )
-        }
-    }
-
     Box(
         modifier = modifier
-            .then(gesturesModifier)
-            .layout { measurable, constraints ->
-                val width = constraints.maxWidth
-                val height = constraints.maxHeight
-                val placeable = measurable.measure(
-                    Constraints(
-                        maxWidth = (width * state.scale).roundToInt(),
-                        maxHeight = (height * state.scale).roundToInt()
-                    )
-                )
-                state.size = IntSize(width, height)
-                state.childSize = Size(
-                    placeable.width / state.scale,
-                    placeable.height / state.scale
-                )
-                layout(width, height) {
-                    placeable.placeWithLayer(
-                        state.translationX.roundToInt() - state.boundOffset.x,
-                        state.translationY.roundToInt() - state.boundOffset.y
-                                + state.dismissDragOffsetY.roundToInt()
-                    )
-                }
-            }
+            .zoomable(
+                modifier = modifier,
+                state = state,
+                enabled = enabled,
+                onTap = onTap,
+                dismissGestureEnabled = dismissGestureEnabled,
+                onDismiss = onDismiss
+            )
     ) {
         content()
     }
