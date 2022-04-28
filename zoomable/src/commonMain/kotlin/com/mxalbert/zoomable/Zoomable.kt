@@ -7,10 +7,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastAny
@@ -90,6 +92,80 @@ fun Zoomable(
     ) {
         content()
     }
+}
+
+/**
+ * A Modifier of zoomable layout that supports zooming in and out, dragging, double tap and
+ * dismiss gesture.
+ *
+ * @param modifier The modifier to apply to this layout.
+ * @param state The state object to be used to control or observe the state.
+ * @param enabled Controls the enabled state. When false, all gestures will be ignored.
+ * @param onTap Will be called when a single tap is detected.
+ * @param dismissGestureEnabled Whether to enable dismiss gesture detection.
+ * @param onDismiss Will be called when dismiss gesture is detected. Should return a boolean
+ * indicating whether the dismiss request is handled.
+ */
+fun Modifier.zoomable(
+    modifier: Modifier = Modifier,
+    state: ZoomableState,
+    enabled: Boolean = true,
+    onTap: ((Offset) -> Unit)? = null,
+    dismissGestureEnabled: Boolean = false,
+    onDismiss: () -> Boolean = { false },
+) = composed(
+    inspectorInfo = debugInspectorInfo {
+        name = "zoomable"
+        properties["enabled"] = enabled
+        properties["onTap"] = onTap
+        properties["dismissGestureEnabled"] = dismissGestureEnabled
+        properties["onDismiss"] = onDismiss
+    }
+) {
+    val dismissGestureEnabledState = rememberUpdatedState(dismissGestureEnabled)
+    val gesturesModifier = if (!enabled) Modifier else {
+        LaunchedEffect(state.isGestureInProgress, state.overZoomConfig) {
+            if (!state.isGestureInProgress) {
+                val range = state.overZoomConfig?.range
+                if (range?.contains(state.scale) == false) {
+                    state.animateScaleTo(state.scale.coerceIn(range))
+                }
+            }
+        }
+
+        Modifier.pointerInput(state) {
+            detectZoomableGestures(
+                state = state,
+                onTap = onTap,
+                dismissGestureEnabled = dismissGestureEnabledState,
+                onDismiss = onDismiss
+            )
+        }
+    }
+    modifier
+        .then(gesturesModifier)
+        .layout { measurable, constraints ->
+            val width = constraints.maxWidth
+            val height = constraints.maxHeight
+            val placeable = measurable.measure(
+                Constraints(
+                    maxWidth = (width * state.scale).roundToInt(),
+                    maxHeight = (height * state.scale).roundToInt()
+                )
+            )
+            state.size = IntSize(width, height)
+            state.childSize = Size(
+                placeable.width / state.scale,
+                placeable.height / state.scale
+            )
+            layout(width, height) {
+                placeable.placeWithLayer(
+                    state.translationX.roundToInt() - state.boundOffset.x,
+                    state.translationY.roundToInt() - state.boundOffset.y
+                            + state.dismissDragOffsetY.roundToInt()
+                )
+            }
+        }
 }
 
 internal suspend fun PointerInputScope.detectZoomableGestures(
