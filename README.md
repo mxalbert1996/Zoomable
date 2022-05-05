@@ -44,7 +44,25 @@ dependencies {
 </details>
 
 # Usage
-Just wrap your composable with `Zoomable`!
+```Kotlin
+Zoomable {
+    val painter = painterResource(R.drawable.image)
+    val size = painter.intrinsicSize
+    Image(
+        painter = painter,
+        contentDescription = null,
+        modifier = Modifier
+            .aspectRatio(size.width / size.height)
+            .fillMaxSize()
+    )
+}
+```
+
+Note that `Modifier.aspectRatio()` is needed in order to remove the extra space around the image
+when the image is zoomed.
+
+For how to use `Zoomable` with [Coil](https://github.com/coil-kt/coil), see
+[the sample](sample/src/main/java/com/mxalbert/zoomable/sample/MainActivity.kt).
 
 # License
 ```
