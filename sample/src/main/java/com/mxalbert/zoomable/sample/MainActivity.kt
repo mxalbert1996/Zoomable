@@ -15,13 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
-import coil.size.OriginalSize
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -49,7 +50,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalCoilApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun Sample(
     onDismiss: () -> Unit,
@@ -78,8 +79,13 @@ private fun Sample(
                     false
                 }
             ) {
-                val painter = rememberImagePainter(data = images[index]) { size(OriginalSize) }
-                if (painter.state is ImagePainter.State.Success) {
+                val painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(images[index])
+                        .size(Size.ORIGINAL)
+                        .build()
+                )
+                if (painter.state is AsyncImagePainter.State.Success) {
                     val size = painter.intrinsicSize
                     Image(
                         painter = painter,

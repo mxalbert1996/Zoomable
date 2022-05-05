@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.binaryCompatibilityValidator)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.maven.publish.base)
 }
 
 kotlin {
