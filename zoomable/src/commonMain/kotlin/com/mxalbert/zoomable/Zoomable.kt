@@ -42,6 +42,7 @@ fun Zoomable(
     content: @Composable () -> Unit
 ) {
     val dismissGestureEnabledState = rememberUpdatedState(dismissGestureEnabled)
+    val onDismissState = rememberUpdatedState(onDismiss)
     val gesturesModifier = if (!enabled) Modifier else {
         LaunchedEffect(state.isGestureInProgress, state.overZoomConfig) {
             if (!state.isGestureInProgress) {
@@ -57,7 +58,7 @@ fun Zoomable(
                 state = state,
                 onTap = onTap,
                 dismissGestureEnabled = dismissGestureEnabledState,
-                onDismiss = onDismiss
+                onDismiss = onDismissState
             )
         }
     }
@@ -96,7 +97,7 @@ internal suspend fun PointerInputScope.detectZoomableGestures(
     state: ZoomableState,
     onTap: ((Offset) -> Unit)?,
     dismissGestureEnabled: State<Boolean>,
-    onDismiss: () -> Boolean
+    onDismiss: State<() -> Boolean>
 ): Unit = coroutineScope {
     launch {
         detectTapGestures(
@@ -163,7 +164,7 @@ internal suspend fun PointerInputScope.detectZoomableGestures(
                     if (state.isZooming) {
                         state.onDragEnd()
                     } else {
-                        if (!(state.shouldDismiss && onDismiss())) {
+                        if (!(state.shouldDismiss && onDismiss.value.invoke())) {
                             state.onDismissDragEnd()
                         }
                     }

@@ -311,17 +311,18 @@ class ZoomableTest {
                 this.childSize = size.toSize()
             },
             size = size,
-            dismissGestureEnabled = mutableStateOf(false)
+            dismissGestureEnabled = false
         )
         SuspendingGestureTestUtil(width = size.width, height = size.height) {
             detectZoomableGestures(
                 state = scope.state,
-                onTap = { scope.tapped = true },
-                dismissGestureEnabled = scope.dismissGestureEnabled
-            ) {
-                scope.dismissed = true
-                false
-            }
+                onTap = { scope.onTap() },
+                dismissGestureEnabled = scope.dismissGestureEnabled,
+                onDismiss = mutableStateOf({
+                    scope.onDismiss()
+                    false
+                })
+            )
         }.executeInComposition {
             block(scope)
         }
@@ -330,10 +331,22 @@ class ZoomableTest {
     private class TestTapAndDragScope(
         val state: ZoomableState,
         val size: IntSize,
-        val dismissGestureEnabled: MutableState<Boolean>
+        dismissGestureEnabled: Boolean
     ) {
+        val dismissGestureEnabled: MutableState<Boolean> = mutableStateOf(dismissGestureEnabled)
+
         var tapped: Boolean = false
+            private set
         var dismissed: Boolean = false
+            private set
+
+        fun onTap() {
+            tapped = true
+        }
+
+        fun onDismiss() {
+            dismissed = true
+        }
     }
 
 }
