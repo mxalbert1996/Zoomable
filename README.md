@@ -8,13 +8,6 @@ Supports Jetpack Compose and Compose for Desktop.
 
 https://user-images.githubusercontent.com/9391933/121725264-fc2c7d00-cb23-11eb-8442-bc6a07f0b4ba.mp4
 
-Improvements and behavior changes compared to [the original version](https://github.com/Tlaster/Zoomable):
-
-- This version is mainly intended to be used to show images. If the image is larger than the screen, when zoomed, the original version will show the upscaled version of the downscaled image, while this version will directly scale the image to the zoomed size, which has higher quality.
-- Contents will follow finger position when zooming with two fingers.
-- Supports animating scale level and translation at the same time.
-- Supports Twitter-like dismiss gesture.
-
 # Download
 ```Kotlin
 repositories {
@@ -63,6 +56,15 @@ when the image is zoomed.
 
 For how to use `Zoomable` with [Coil](https://github.com/coil-kt/coil), see
 [the sample](sample/src/main/java/com/mxalbert/zoomable/sample/MainActivity.kt).
+
+# Notes
+
+Improvements and behavior changes compared to [the original version](https://github.com/Tlaster/Zoomable):
+
+- This version is mainly intended to be used to show images. If the image is larger than the screen, when zoomed, the original version will show the upscaled version of the downscaled image, while this version will directly scale the image to the zoomed size, which has higher quality.
+- Contents will follow finger position when zooming with two fingers.
+- Supports animating scale level and translation at the same time.
+- Supports Twitter-like dismiss gesture.
 
 # License
 ```
