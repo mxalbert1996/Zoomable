@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    namespace = "com.mxalbert.zoomable.sample"
     compileSdk = libs.versions.sdk.compile.get().toInt()
     buildToolsVersion = libs.versions.buildTools.get()
 

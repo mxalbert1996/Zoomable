@@ -67,6 +67,7 @@ kotlin {
 }
 
 android {
+    namespace = "com.mxalbert.zoomable.zoomable"
     compileSdk = libs.versions.sdk.compile.get().toInt()
     buildToolsVersion = libs.versions.buildTools.get()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
