@@ -104,8 +104,8 @@ class ZoomableState(
 
     private val velocityTracker = VelocityTracker()
     private var _scale by mutableStateOf(initialScale)
-    private var _translationX = Animatable(initialTranslationX)
-    private var _translationY = Animatable(initialTranslationY)
+    private var _translationX = Animatable(initialTranslationX, PxVisibilityThreshold)
+    private var _translationY = Animatable(initialTranslationY, PxVisibilityThreshold)
     private var _size by mutableStateOf(IntSize.Zero)
     private var _childSize by mutableStateOf(Size.Zero)
 
@@ -175,6 +175,14 @@ class ZoomableState(
     private var flingJob: Job? = null
     internal var isGestureInProgress: Boolean by mutableStateOf(false)
         private set
+
+    internal val horizontalEdge: HorizontalEdge
+        get() = when {
+            _translationX.upperBound == _translationX.lowerBound -> HorizontalEdge.Both
+            _translationX.run { value >= upperBound!! - PxVisibilityThreshold } -> HorizontalEdge.Left
+            _translationX.run { value <= lowerBound!! + PxVisibilityThreshold } -> HorizontalEdge.Right
+            else -> HorizontalEdge.None
+        }
 
     private fun updateBounds() {
         val offsetX = childSize.width * scale - size.width
@@ -339,6 +347,25 @@ class ZoomableState(
         )
     }
 }
+
+@kotlin.jvm.JvmInline
+internal value class HorizontalEdge private constructor(private val value: Int) {
+
+    fun isOutwards(direction: Float): Boolean {
+        if (value and 0b10 != 0 && direction > 0) return true
+        if (value and 0b01 != 0 && direction < 0) return true
+        return false
+    }
+
+    companion object {
+        val None = HorizontalEdge(0b00)
+        val Left = HorizontalEdge(0b10)
+        val Right = HorizontalEdge(0b01)
+        val Both = HorizontalEdge(0b11)
+    }
+}
+
+private const val PxVisibilityThreshold = 0.5f
 
 internal const val DismissDragResistanceFactor = 2f
 internal const val DismissDragThreshold = 0.25f

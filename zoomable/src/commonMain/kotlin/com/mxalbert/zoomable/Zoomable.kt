@@ -17,6 +17,7 @@ import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -191,7 +192,15 @@ private suspend fun PointerInputScope.detectDragGestures(
                 var overSlop = Offset.Zero
                 val drag = if (state.isZooming) {
                     if (startDragImmediately()) down else {
+                        val horizontalEdge = state.horizontalEdge
                         awaitTouchSlopOrCancellation(down.id) { change, over ->
+                            if (horizontalEdge != HorizontalEdge.None) {
+                                val offset = if (over != Offset.Zero) over else change.positionChange()
+                                val direction = offset.x / abs(offset.y)
+                                if (horizontalEdge.isOutwards(direction) && abs(direction) > 1) {
+                                    return@awaitTouchSlopOrCancellation
+                                }
+                            }
                             change.consumePositionChange()
                             overSlop = over
                         }

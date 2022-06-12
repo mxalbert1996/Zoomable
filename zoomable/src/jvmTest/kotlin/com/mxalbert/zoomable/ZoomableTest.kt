@@ -159,6 +159,16 @@ class ZoomableTest {
     }
 
     @Test
+    fun `Horizontal swipe not consumed at edge when zoomed`() {
+        testTapAndDrag {
+            doubleTap()
+            val horizontalSwipe = down().moveBy(Offset(touchSlop, 0f))
+            assertThat(horizontalSwipe.anyChangeConsumed()).isFalse()
+            horizontalSwipe.up()
+        }
+    }
+
+    @Test
     fun `Double tap at the center to zoom in without translation change`() {
         testTapAndDrag { scope ->
             with(scope) {
