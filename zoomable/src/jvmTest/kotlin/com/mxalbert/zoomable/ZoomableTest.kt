@@ -1,11 +1,14 @@
 package com.mxalbert.zoomable
 
+import androidx.compose.animation.SplineBasedFloatDecayAnimationSpec
+import androidx.compose.animation.core.generateDecayAnimationSpec
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.anyChangeConsumed
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import com.google.common.truth.Truth.assertThat
@@ -17,7 +20,7 @@ class ZoomableTest {
 
     @Test
     fun `ZoomableState default params`() {
-        val state = ZoomableState()
+        val state = ZoomableState(decayAnimationSpec)
         assertThat(state.minScale).isEqualTo(ZoomableDefaults.MinScale)
         assertThat(state.minScale).isEqualTo(ZoomableDefaults.MinScale)
         assertThat(state.maxScale).isEqualTo(ZoomableDefaults.MaxScale)
@@ -30,6 +33,7 @@ class ZoomableTest {
     @Test
     fun `ZoomableState constructor params`() {
         val state = ZoomableState(
+            decayAnimationSpec,
             initialScale = 2f,
             initialTranslationX = 100f,
             initialTranslationY = 100f
@@ -304,13 +308,16 @@ class ZoomableTest {
         return secondTap
     }
 
+    private val decayAnimationSpec =
+        SplineBasedFloatDecayAnimationSpec(Density(1f)).generateDecayAnimationSpec<Float>()
+
     private fun testTapAndDrag(
         overZoom: Boolean = false,
         block: suspend SuspendingGestureTestUtil.(TestTapAndDragScope) -> Unit
     ) {
         val size = IntSize(100, 100)
         val scope = TestTapAndDragScope(
-            state = ZoomableState().apply {
+            state = ZoomableState(decayAnimationSpec).apply {
                 if (overZoom) {
                     minScale = ZoomableDefaults.MinScale / 2
                     maxScale = ZoomableDefaults.MaxScale * 1.5f

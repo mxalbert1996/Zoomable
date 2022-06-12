@@ -102,9 +102,10 @@ class ZoomableAndroidTest {
                 endVelocity = 5000f
             )
         }
-        content
-            .assertLeftPositionInRootIsEqualTo(-getUnclippedBoundsInRoot().width)
-            .assertTopPositionInRootIsEqualTo(-getUnclippedBoundsInRoot().height)
+        val contentBounds = content.getUnclippedBoundsInRoot()
+        val containerBounds = getUnclippedBoundsInRoot()
+        assertThat(contentBounds.left).isLessThan(-containerBounds.width / 2)
+        assertThat(contentBounds.top).isLessThan(-containerBounds.height / 2)
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.mxalbert.zoomable
 
 import androidx.compose.animation.core.*
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
@@ -40,8 +41,10 @@ fun rememberZoomableState(
     initialTranslationX: Float = 0f,
     initialTranslationY: Float = 0f
 ): ZoomableState {
-    return rememberSaveable(saver = ZoomableState.Saver) {
-        ZoomableState(initialScale, initialTranslationX, initialTranslationY)
+    val decayAnimationSpec = rememberSplineBasedDecay<Float>()
+    val saver = remember(decayAnimationSpec) { ZoomableState.saver(decayAnimationSpec) }
+    return rememberSaveable(decayAnimationSpec, saver = saver) {
+        ZoomableState(decayAnimationSpec, initialScale, initialTranslationX, initialTranslationY)
     }.apply {
         this.minScale = minScale
         this.maxScale = maxScale
@@ -60,6 +63,7 @@ fun rememberZoomableState(
  */
 @Stable
 class ZoomableState(
+    private val decayAnimationSpec: DecayAnimationSpec<Float>,
     initialScale: Float = ZoomableDefaults.MinScale,
     initialTranslationX: Float = 0f,
     initialTranslationY: Float = 0f
@@ -259,12 +263,11 @@ class ZoomableState(
     private suspend fun fling(velocity: Velocity) {
         coroutineScope {
             flingJob = coroutineContext[Job]
-            val spec = exponentialDecay<Float>()
             launch {
-                _translationX.animateDecay(initialVelocity = velocity.x, animationSpec = spec)
+                _translationX.animateDecay(initialVelocity = velocity.x, animationSpec = decayAnimationSpec)
             }
             launch {
-                _translationY.animateDecay(initialVelocity = velocity.y, animationSpec = spec)
+                _translationY.animateDecay(initialVelocity = velocity.y, animationSpec = decayAnimationSpec)
             }
         }
 
@@ -329,7 +332,7 @@ class ZoomableState(
         /**
          * The default [Saver] implementation for [ZoomableState].
          */
-        val Saver: Saver<ZoomableState, *> = listSaver(
+        fun saver(decayAnimationSpec: DecayAnimationSpec<Float>): Saver<ZoomableState, *> = listSaver(
             save = {
                 listOf(
                     it.translationX,
@@ -339,6 +342,7 @@ class ZoomableState(
             },
             restore = {
                 ZoomableState(
+                    decayAnimationSpec = decayAnimationSpec,
                     initialTranslationX = it[0],
                     initialTranslationY = it[1],
                     initialScale = it[2]
