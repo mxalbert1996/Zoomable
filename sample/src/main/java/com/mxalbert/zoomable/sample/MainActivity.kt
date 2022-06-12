@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -57,10 +58,10 @@ private fun Sample(
     modifier: Modifier = Modifier
 ) {
     HorizontalPager(count = images.size, modifier = modifier) { index ->
-        var enabled by remember { mutableStateOf(true) }
-        var overZoom by remember { mutableStateOf(false) }
-        var fadeOut by remember { mutableStateOf(false) }
-        var isOverlayVisible by remember { mutableStateOf(true) }
+        var enabled by rememberSaveable { mutableStateOf(true) }
+        var overZoom by rememberSaveable { mutableStateOf(false) }
+        var fadeOut by rememberSaveable { mutableStateOf(false) }
+        var isOverlayVisible by rememberSaveable { mutableStateOf(true) }
         val state = rememberZoomableState(
             minScale = if (overZoom) 0.5f else 1f,
             maxScale = if (overZoom) 6f else 4f,
