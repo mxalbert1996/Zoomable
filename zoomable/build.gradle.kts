@@ -42,7 +42,6 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                compileOnly(libs.compose.runtime.jetpack)
                 implementation(libs.compose.foundation.jetpack)
                 implementation(libs.compose.ui.util.jetpack)
             }
@@ -70,6 +69,9 @@ android {
     namespace = "com.mxalbert.zoomable.zoomable"
     compileSdk = libs.versions.sdk.compile.get().toInt()
     buildToolsVersion = libs.versions.buildTools.get()
+
+    buildFeatures.compose = true
+
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
@@ -80,6 +82,10 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.jetpack.get()
     }
 
     packagingOptions.resources.pickFirsts.add("META-INF/*")
