@@ -69,8 +69,10 @@ private fun Sample(
         )
         Box {
             Zoomable(
-                modifier = if (!fadeOut) Modifier else
-                    Modifier.graphicsLayer { alpha = 1 - state.dismissDragProgress },
+                modifier = Modifier.graphicsLayer {
+                    clip = true
+                    alpha = if (fadeOut) 1 - state.dismissDragProgress else 1f
+                },
                 state = state,
                 enabled = enabled,
                 onTap = { isOverlayVisible = !isOverlayVisible },
