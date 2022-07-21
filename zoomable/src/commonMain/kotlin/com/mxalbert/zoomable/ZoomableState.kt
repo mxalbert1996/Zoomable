@@ -189,6 +189,7 @@ class ZoomableState(
         }
 
     private fun updateBounds() {
+        if (childSize == Size.Zero) return
         val offsetX = childSize.width * scale - size.width
         val offsetY = childSize.height * scale - size.height
         boundOffset = IntOffset((offsetX / 2f).roundToInt(), (offsetY / 2f).roundToInt())
