@@ -16,6 +16,7 @@ android {
         applicationId = "com.mxalbert.zoomable.sample"
         minSdk = libs.versions.sdk.min.get().toInt()
         targetSdk = libs.versions.sdk.target.get().toInt()
+        resourceConfigurations += "en"
         val libVersion = property("VERSION_NAME") as String
         val isSnapshot = libVersion.endsWith("SNAPSHOT")
         val appVersion = if (isSnapshot) {
@@ -50,6 +51,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+
+    packagingOptions {
+        resources.excludes += listOf(
+            "META-INF/*",
+            "**/*.kotlin_builtins",
+            "DebugProbesKt.bin"
+        )
     }
 }
 
