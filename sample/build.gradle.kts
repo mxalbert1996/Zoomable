@@ -1,3 +1,5 @@
+import java.io.ByteArrayOutputStream
+
 plugins {
     kotlin("android")
     id("com.android.application")
@@ -14,8 +16,26 @@ android {
         applicationId = "com.mxalbert.zoomable.sample"
         minSdk = libs.versions.sdk.min.get().toInt()
         targetSdk = libs.versions.sdk.target.get().toInt()
-        versionName = property("VERSION_NAME") as String
-        versionCode = 1
+        val libVersion = property("VERSION_NAME") as String
+        val isSnapshot = libVersion.endsWith("SNAPSHOT")
+        val appVersion = if (isSnapshot) {
+            ByteArrayOutputStream().use { os ->
+                exec {
+                    setCommandLine("git", "describe", "--tags")
+                    standardOutput = os
+                }
+                os.toString()
+            }
+        } else libVersion
+        val (version, commitCount) = if (isSnapshot) {
+            val description = appVersion.split('-')
+            description[0] to description[1].toInt()
+        } else {
+            libVersion to 0
+        }
+        versionName = appVersion
+        versionCode = commitCount + version.split('.')
+            .fold(0) { result, number -> (result + number.toInt()) * 100 }
     }
 
     composeOptions {
