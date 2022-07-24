@@ -5,6 +5,7 @@ import androidx.compose.animation.core.generateDecayAnimationSpec
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.anyChangeConsumed
@@ -39,6 +40,20 @@ class ZoomableTest {
             initialTranslationY = 100f
         )
         assertThat(state.scale).isEqualTo(2f)
+        assertThat(state.translationX).isEqualTo(100f)
+        assertThat(state.translationY).isEqualTo(100f)
+    }
+
+    @Test
+    fun `Translation not reset after stored`() {
+        val state = ZoomableState(
+            decayAnimationSpec,
+            initialScale = 2f,
+            initialTranslationX = 100f,
+            initialTranslationY = 100f
+        )
+        state.size = IntSize(200, 200)
+        state.childSize = Size(0f, 0f)
         assertThat(state.translationX).isEqualTo(100f)
         assertThat(state.translationY).isEqualTo(100f)
     }
