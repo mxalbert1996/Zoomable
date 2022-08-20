@@ -6,9 +6,15 @@
 Content zooming with dragging, double tap and dismiss gesture support for Compose.
 Supports Jetpack Compose and Compose for Desktop.
 
-https://user-images.githubusercontent.com/9391933/121725264-fc2c7d00-cb23-11eb-8442-bc6a07f0b4ba.mp4
+The demo can also be installed from [Google Play](https://play.google.com/store/apps/details?id=com.mxalbert.zoomable.sample).
 
-# Download
+## Features
+
+- Dragging, double tap and vertical swipe-to-dismiss gesture support
+- Over-zoom effect
+- Seamless integration with horizontal pager
+
+## Download
 ```Kotlin
 repositories {
     mavenCentral()
@@ -36,7 +42,7 @@ dependencies {
 ```
 </details>
 
-# Usage
+## Usage
 ```Kotlin
 Zoomable {
     val painter = painterResource(R.drawable.image)
@@ -57,16 +63,16 @@ when the image is zoomed.
 For how to use `Zoomable` with [Coil](https://github.com/coil-kt/coil), see
 [the sample](sample/src/main/java/com/mxalbert/zoomable/sample/MainActivity.kt).
 
-# Notes
+## Notes
 
 Improvements and behavior changes compared to [the original version](https://github.com/Tlaster/Zoomable):
 
 - This version is mainly intended to be used to show images. If the image is larger than the screen, when zoomed, the original version will show the upscaled version of the downscaled image, while this version will directly scale the image to the zoomed size, which has higher quality.
 - Contents will follow finger position when zooming with two fingers.
 - Supports animating scale level and translation at the same time.
-- Supports Twitter-like dismiss gesture.
+- Other features
 
-# License
+## License
 ```
 MIT License
 
