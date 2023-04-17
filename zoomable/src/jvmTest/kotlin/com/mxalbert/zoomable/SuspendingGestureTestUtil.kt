@@ -129,7 +129,7 @@ internal class SuspendingGestureTestUtil(
             previousUptimeMillis = lastTime,
             previousPosition = Offset(x, y),
             previousPressed = false,
-            ConsumedData()
+            isInitiallyConsumed = false
         )
         activePointers[change.id] = change
         invokeOverAllPasses(change, initial, main, final)
@@ -173,7 +173,7 @@ internal class SuspendingGestureTestUtil(
             uptimeMillis = lastTime,
             pressed = false,
             position = position,
-            consumed = ConsumedData()
+            isInitiallyConsumed = false
         )
         activePointers[change.id] = change
         invokeOverAllPasses(change, initial, main, final)
@@ -203,7 +203,7 @@ internal class SuspendingGestureTestUtil(
             uptimeMillis = lastTime,
             position = Offset(x, y),
             pressed = true,
-            consumed = ConsumedData()
+            isInitiallyConsumed = false
         )
         initial(change)
         activePointers[change.id] = change
@@ -269,7 +269,7 @@ internal class SuspendingGestureTestUtil(
                         uptimeMillis = currentTime,
                         pressed = change.pressed,
                         position = change.position,
-                        consumed = ConsumedData()
+                        isInitiallyConsumed = false
                     )
                 )
             }
