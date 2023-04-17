@@ -8,7 +8,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.anyChangeConsumed
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
@@ -78,7 +77,7 @@ class ZoomableTest {
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(0f)
                 assertThat(state.dismissDragOffsetY).isEqualTo(0f)
-                assertThat(verticalSwipe.anyChangeConsumed()).isFalse()
+                assertThat(verticalSwipe.isConsumed).isFalse()
                 verticalSwipe.up()
             }
         }
@@ -93,7 +92,7 @@ class ZoomableTest {
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(0f)
                 assertThat(state.dismissDragOffsetY).isEqualTo(0f)
-                assertThat(horizontalSwipe.anyChangeConsumed()).isFalse()
+                assertThat(horizontalSwipe.isConsumed).isFalse()
                 horizontalSwipe.up()
             }
         }
@@ -111,19 +110,19 @@ class ZoomableTest {
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(0f)
                 assertThat(state.dismissDragProgress).isEqualTo(0f)
                 assertThat(state.dismissDragOffsetY).isEqualTo(0f)
-                assertThat(verticalSwipe.consumed.positionChange).isTrue()
+                assertThat(verticalSwipe.isConsumed).isTrue()
                 verticalSwipe = verticalSwipe.moveBy(Offset(0f, 150f))
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(150f)
                 assertThat(state.dismissDragOffsetY).isEqualTo(size.height / DismissDragResistanceFactor)
-                assertThat(verticalSwipe.consumed.positionChange).isTrue()
+                assertThat(verticalSwipe.isConsumed).isTrue()
                 verticalSwipe = verticalSwipe.moveBy(Offset(0f, dismissThreshold - 150f))
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(dismissThreshold)
                 assertThat(state.dismissDragProgress).isEqualTo(1f)
-                assertThat(verticalSwipe.consumed.positionChange).isTrue()
+                assertThat(verticalSwipe.isConsumed).isTrue()
                 verticalSwipe.up()
                 assertThat(dismissed).isFalse()
             }
@@ -154,7 +153,7 @@ class ZoomableTest {
                 val verticalSwipe = down().moveBy(Offset(0f, touchSlop))
                     .moveBy(Offset(0f, dismissThreshold + 1f))
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(dismissThreshold + 1f)
-                assertThat(verticalSwipe.consumed.positionChange).isTrue()
+                assertThat(verticalSwipe.isConsumed).isTrue()
                 verticalSwipe.up()
                 assertThat(dismissed).isTrue()
             }
@@ -171,7 +170,7 @@ class ZoomableTest {
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
                 assertThat(state.dismissDragAbsoluteOffsetY).isEqualTo(0f)
-                assertThat(horizontalSwipe.anyChangeConsumed()).isFalse()
+                assertThat(horizontalSwipe.isConsumed).isFalse()
                 horizontalSwipe.up()
             }
         }
@@ -182,7 +181,7 @@ class ZoomableTest {
         testTapAndDrag {
             doubleTap()
             val horizontalSwipe = down().moveBy(Offset(touchSlop, 0f))
-            assertThat(horizontalSwipe.anyChangeConsumed()).isFalse()
+            assertThat(horizontalSwipe.isConsumed).isFalse()
             horizontalSwipe.up()
         }
     }
@@ -196,7 +195,7 @@ class ZoomableTest {
                 assertThat(state.scale).isEqualTo(ZoomableDefaults.DoubleTapScale)
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
-                assertThat(secondTap.consumed.downChange).isTrue()
+                assertThat(secondTap.isConsumed).isTrue()
             }
         }
     }
@@ -209,7 +208,7 @@ class ZoomableTest {
                 assertThat(state.scale).isEqualTo(ZoomableDefaults.DoubleTapScale)
                 assertThat(state.translationX).isEqualTo(50f)
                 assertThat(state.translationY).isEqualTo(50f)
-                assertThat(secondTap.consumed.downChange).isTrue()
+                assertThat(secondTap.isConsumed).isTrue()
             }
         }
     }
@@ -224,19 +223,19 @@ class ZoomableTest {
                 var drag = down().moveBy(Offset(0f, touchSlop))
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
-                assertThat(drag.consumed.positionChange).isTrue()
+                assertThat(drag.isConsumed).isTrue()
                 drag = drag.moveBy(Offset(50f, 50f))
                 assertThat(state.translationX).isEqualTo(50f)
                 assertThat(state.translationY).isEqualTo(50f)
-                assertThat(drag.consumed.positionChange).isTrue()
+                assertThat(drag.isConsumed).isTrue()
                 drag = drag.moveBy(Offset(50f, 50f))
                 assertThat(state.translationX).isEqualTo(50f)
                 assertThat(state.translationY).isEqualTo(50f)
-                assertThat(drag.consumed.positionChange).isTrue()
+                assertThat(drag.isConsumed).isTrue()
                 drag = drag.moveBy(Offset(-100f, -100f))
                 assertThat(state.translationX).isEqualTo(-50f)
                 assertThat(state.translationY).isEqualTo(-50f)
-                assertThat(drag.consumed.positionChange).isTrue()
+                assertThat(drag.isConsumed).isTrue()
                 drag.up()
             }
         }
@@ -251,7 +250,7 @@ class ZoomableTest {
                 assertThat(state.scale).isEqualTo(ZoomableDefaults.MinScale)
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
-                assertThat(secondTap.consumed.downChange).isTrue()
+                assertThat(secondTap.isConsumed).isTrue()
             }
         }
     }
@@ -265,7 +264,7 @@ class ZoomableTest {
                 assertThat(state.scale).isEqualTo(ZoomableDefaults.MinScale)
                 assertThat(state.translationX).isEqualTo(0f)
                 assertThat(state.translationY).isEqualTo(0f)
-                assertThat(secondTap.consumed.downChange).isTrue()
+                assertThat(secondTap.isConsumed).isTrue()
             }
         }
     }

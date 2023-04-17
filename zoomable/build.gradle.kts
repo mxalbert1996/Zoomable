@@ -16,6 +16,8 @@ kotlin {
         publishLibraryVariants("release")
     }
     jvm()
+
+    @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -47,21 +49,13 @@ kotlin {
                 implementation(libs.compose.ui.util.jetpack)
             }
         }
-        val androidAndroidTest by getting {
+        val androidInstrumentedTest by getting {
             dependsOn(commonTest)
             dependencies {
                 implementation(libs.truth)
                 implementation(libs.compose.ui.test.junit4)
                 implementation(libs.compose.ui.test.manifest)
             }
-        }
-        removeAll { sourceSet ->
-            sourceSet.name in setOf(
-                "androidAndroidTestRelease",
-                "androidTestFixtures",
-                "androidTestFixturesDebug",
-                "androidTestFixturesRelease",
-            )
         }
     }
 }
@@ -74,7 +68,6 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.sdk.min.get().toInt()
-        targetSdk = libs.versions.sdk.target.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

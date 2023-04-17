@@ -1,6 +1,14 @@
 package com.mxalbert.zoomable
 
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.awaitVerticalTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.calculateCentroid
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,7 +17,18 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerId
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.ui.input.pointer.changedToDown
+import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
+import androidx.compose.ui.input.pointer.changedToUp
+import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
@@ -184,46 +203,45 @@ private suspend fun PointerInputScope.detectDragGestures(
     onDragCancel: () -> Unit = {},
     onDrag: (change: PointerInputChange, dragAmount: Offset) -> Unit
 ) {
-    forEachGesture {
-        awaitPointerEventScope {
-            // We have to always call this or we'll get a crash if we do nothing
-            val down = awaitFirstDown(requireUnconsumed = false)
-            if (state.isZooming || dismissGestureEnabled.value) {
-                var overSlop = Offset.Zero
-                val drag = if (state.isZooming) {
-                    if (startDragImmediately()) down else {
-                        val horizontalEdge = state.horizontalEdge
-                        awaitTouchSlopOrCancellation(down.id) { change, over ->
-                            if (horizontalEdge != HorizontalEdge.None) {
-                                val offset = if (over != Offset.Zero) over else change.positionChange()
-                                val direction = offset.x / abs(offset.y)
-                                if (horizontalEdge.isOutwards(direction) && abs(direction) > 1) {
-                                    return@awaitTouchSlopOrCancellation
-                                }
+    awaitEachGesture {
+        // We have to always call this or we'll get a crash if we do nothing
+        val down = awaitFirstDown(requireUnconsumed = false)
+        if (state.isZooming || dismissGestureEnabled.value) {
+            var overSlop = Offset.Zero
+            val drag = if (state.isZooming) {
+                if (startDragImmediately()) down else {
+                    val horizontalEdge = state.horizontalEdge
+                    awaitTouchSlopOrCancellation(down.id) { change, over ->
+                        if (horizontalEdge != HorizontalEdge.None) {
+                            val offset =
+                                if (over != Offset.Zero) over else change.positionChange()
+                            val direction = offset.x / abs(offset.y)
+                            if (horizontalEdge.isOutwards(direction) && abs(direction) > 1) {
+                                return@awaitTouchSlopOrCancellation
                             }
-                            change.consumePositionChange()
-                            overSlop = over
                         }
-                    }
-                } else {
-                    awaitVerticalTouchSlopOrCancellation(down.id) { change, over ->
-                        change.consumePositionChange()
-                        overSlop = Offset(0f, over)
+                        change.consume()
+                        overSlop = over
                     }
                 }
-                if (drag != null) {
-                    onDragStart(down)
-                    if (overSlop != Offset.Zero) onDrag(drag, overSlop)
-                    if (
-                        !drag(drag.id) {
-                            onDrag(it, it.positionChange())
-                            it.consumePositionChange()
-                        }
-                    ) {
-                        onDragCancel()
-                    } else {
-                        onDragEnd()
+            } else {
+                awaitVerticalTouchSlopOrCancellation(down.id) { change, over ->
+                    change.consume()
+                    overSlop = Offset(0f, over)
+                }
+            }
+            if (drag != null) {
+                onDragStart(down)
+                if (overSlop != Offset.Zero) onDrag(drag, overSlop)
+                if (
+                    !drag(drag.id) {
+                        onDrag(it, it.positionChange())
+                        it.consume()
                     }
+                ) {
+                    onDragCancel()
+                } else {
+                    onDragEnd()
                 }
             }
         }
@@ -239,29 +257,27 @@ private suspend fun PointerInputScope.detectTransformGestures(
     onGestureEnd: () -> Unit = {},
     onGesture: (centroid: Offset, pan: Offset, zoom: Float) -> Unit
 ) {
-    forEachGesture {
-        awaitPointerEventScope {
-            awaitTwoDowns(requireUnconsumed = false)
-            onGestureStart()
-            do {
-                val event = awaitPointerEvent()
-                val canceled = event.changes.fastAny { it.positionChangeConsumed() }
-                if (!canceled) {
-                    val zoomChange = event.calculateZoom()
-                    val panChange = event.calculatePan()
-                    val centroid = event.calculateCentroid(useCurrent = false)
-                    if (zoomChange != 1f || panChange != Offset.Zero) {
-                        onGesture(centroid, panChange, zoomChange)
-                    }
-                    event.changes.fastForEach {
-                        if (it.positionChanged()) {
-                            it.consumeAllChanges()
-                        }
+    awaitEachGesture {
+        awaitTwoDowns(requireUnconsumed = false)
+        onGestureStart()
+        do {
+            val event = awaitPointerEvent()
+            val canceled = event.changes.fastAny { it.isConsumed }
+            if (!canceled) {
+                val zoomChange = event.calculateZoom()
+                val panChange = event.calculatePan()
+                val centroid = event.calculateCentroid(useCurrent = false)
+                if (zoomChange != 1f || panChange != Offset.Zero) {
+                    onGesture(centroid, panChange, zoomChange)
+                }
+                event.changes.fastForEach {
+                    if (it.positionChanged()) {
+                        it.consume()
                     }
                 }
-            } while (!canceled && event.changes.fastAny { it.pressed })
-            onGestureEnd()
-        }
+            }
+        } while (!canceled && event.changes.fastAny { it.pressed })
+        onGestureEnd()
     }
 }
 

@@ -24,8 +24,6 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.mxalbert.zoomable.OverZoomConfig
@@ -39,12 +37,10 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             MaterialTheme(colors = darkColors()) {
-                ProvideWindowInsets {
-                    Surface(color = MaterialTheme.colors.background) {
-                        Sample(onDismiss = {
-                            Toast.makeText(this, "Dismiss", Toast.LENGTH_SHORT).show()
-                        })
-                    }
+                Surface(color = MaterialTheme.colors.background) {
+                    Sample(onDismiss = {
+                        Toast.makeText(this, "Dismiss", Toast.LENGTH_SHORT).show()
+                    })
                 }
             }
         }

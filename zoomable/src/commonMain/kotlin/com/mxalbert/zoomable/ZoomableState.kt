@@ -1,11 +1,23 @@
 package com.mxalbert.zoomable
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
@@ -18,7 +30,11 @@ import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.roundToInt
+import kotlin.math.sin
 
 /**
  * Create a [ZoomableState] that is remembered across compositions.
@@ -268,10 +284,16 @@ class ZoomableState(
         coroutineScope {
             flingJob = coroutineContext[Job]
             launch {
-                _translationX.animateDecay(initialVelocity = velocity.x, animationSpec = decayAnimationSpec)
+                _translationX.animateDecay(
+                    initialVelocity = velocity.x,
+                    animationSpec = decayAnimationSpec
+                )
             }
             launch {
-                _translationY.animateDecay(initialVelocity = velocity.y, animationSpec = decayAnimationSpec)
+                _translationY.animateDecay(
+                    initialVelocity = velocity.y,
+                    animationSpec = decayAnimationSpec
+                )
             }
         }
 
@@ -336,23 +358,24 @@ class ZoomableState(
         /**
          * The default [Saver] implementation for [ZoomableState].
          */
-        fun saver(decayAnimationSpec: DecayAnimationSpec<Float>): Saver<ZoomableState, *> = listSaver(
-            save = {
-                listOf(
-                    it.translationX,
-                    it.translationY,
-                    it.scale
-                )
-            },
-            restore = {
-                ZoomableState(
-                    decayAnimationSpec = decayAnimationSpec,
-                    initialTranslationX = it[0],
-                    initialTranslationY = it[1],
-                    initialScale = it[2]
-                )
-            }
-        )
+        fun saver(decayAnimationSpec: DecayAnimationSpec<Float>): Saver<ZoomableState, *> =
+            listSaver(
+                save = {
+                    listOf(
+                        it.translationX,
+                        it.translationY,
+                        it.scale
+                    )
+                },
+                restore = {
+                    ZoomableState(
+                        decayAnimationSpec = decayAnimationSpec,
+                        initialTranslationX = it[0],
+                        initialTranslationY = it[1],
+                        initialScale = it[2]
+                    )
+                }
+            )
     }
 }
 

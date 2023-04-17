@@ -40,7 +40,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.jetpack.get()
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     buildTypes {
@@ -53,7 +53,7 @@ android {
         }
     }
 
-    packagingOptions {
+    packaging {
         resources.excludes += listOf(
             "META-INF/*",
             "**/*.kotlin_builtins",
@@ -66,6 +66,6 @@ dependencies {
     implementation(project(":zoomable"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.material)
-    implementation(libs.bundles.accompanist)
+    implementation(libs.accompanist.pager)
     implementation(libs.coil.compose)
 }
