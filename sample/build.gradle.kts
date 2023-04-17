@@ -66,6 +66,5 @@ dependencies {
     implementation(project(":zoomable"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.material)
-    implementation(libs.accompanist.pager)
     implementation(libs.coil.compose)
 }

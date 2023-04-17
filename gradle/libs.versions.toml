@@ -13,7 +13,6 @@ compose-jetbrains = "1.4.0"
 compose-jetpack = "1.4.1"
 compose-compiler = "1.4.5"
 androidx-activity = "1.7.0"
-accompanist = "0.28.0"
 coil = "2.2.2"
 jUnit = "4.13.2"
 truth = "1.1.3"
@@ -36,7 +35,6 @@ compose-material = { module = "androidx.compose.material:material", version.ref 
 compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-jetpack" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-jetpack" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
-accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 jUnit = { module = "junit:junit", version.ref = "jUnit" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
