@@ -1,4 +1,5 @@
 public final class com/mxalbert/zoomable/OverZoomConfig {
+	public static final field $stable I
 	public fun <init> (FF)V
 	public final fun contains (F)Z
 	public fun equals (Ljava/lang/Object;)Z
@@ -21,6 +22,7 @@ public final class com/mxalbert/zoomable/ZoomableKt {
 }
 
 public final class com/mxalbert/zoomable/ZoomableState {
+	public static final field $stable I
 	public static final field Companion Lcom/mxalbert/zoomable/ZoomableState$Companion;
 	public fun <init> (Landroidx/compose/animation/core/DecayAnimationSpec;FFF)V
 	public synthetic fun <init> (Landroidx/compose/animation/core/DecayAnimationSpec;FFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
