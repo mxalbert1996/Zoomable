@@ -1,6 +1,8 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
@@ -60,11 +62,19 @@ kotlin {
     }
 }
 
+tasks.withType(KotlinCompile::class).configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+    }
+}
+
 android {
     namespace = "com.mxalbert.zoomable.zoomable"
     compileSdk = libs.versions.sdk.compile.get().toInt()
     buildToolsVersion = libs.versions.buildTools.get()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+
+    buildFeatures.buildConfig = false
 
     defaultConfig {
         minSdk = libs.versions.sdk.min.get().toInt()

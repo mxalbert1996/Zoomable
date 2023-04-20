@@ -10,7 +10,10 @@ android {
     compileSdk = libs.versions.sdk.compile.get().toInt()
     buildToolsVersion = libs.versions.buildTools.get()
 
-    buildFeatures.compose = true
+    buildFeatures {
+        buildConfig = false
+        compose = true
+    }
 
     defaultConfig {
         applicationId = "com.mxalbert.zoomable.sample"
@@ -37,6 +40,15 @@ android {
         versionName = appVersion
         versionCode = commitCount + version.split('.')
             .fold(0) { result, number -> (result + number.toInt()) * 100 }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     composeOptions {
