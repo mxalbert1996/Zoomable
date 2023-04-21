@@ -1,5 +1,4 @@
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -7,5 +6,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Zoomable"
-include(":sample")
 include(":zoomable")
+include(":sample:shared")
+include(":sample:desktopApp")
+include(":sample:androidApp")

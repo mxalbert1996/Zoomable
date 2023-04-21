@@ -14,28 +14,28 @@ plugins {
 }
 
 kotlin {
+    jvm()
+
     android {
         publishLibraryVariants("release")
     }
-    jvm()
+
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     @Suppress("UNUSED_VARIABLE")
     sourceSets {
         val commonMain by getting {
             dependencies {
-                compileOnly(libs.compose.runtime.jetbrains)
-                compileOnly(libs.compose.foundation.jetbrains)
-                compileOnly(libs.compose.ui.util.jetbrains)
-            }
-        }
-        val commonTest by getting
-        val jvmMain by getting {
-            dependencies {
-                compileOnly(libs.compose.runtime.jetbrains)
+                implementation(libs.compose.runtime.jetbrains)
                 implementation(libs.compose.foundation.jetbrains)
                 implementation(libs.compose.ui.util.jetbrains)
             }
         }
+        val commonTest by getting
+
+        val jvmMain by getting
         val jvmTest by getting {
             dependsOn(commonTest)
             dependencies {
@@ -44,13 +44,8 @@ kotlin {
                 implementation(libs.coroutines.test)
             }
         }
-        val androidMain by getting {
-            dependencies {
-                compileOnly(libs.compose.runtime.jetpack)
-                implementation(libs.compose.foundation.jetpack)
-                implementation(libs.compose.ui.util.jetpack)
-            }
-        }
+
+        val androidMain by getting
         val androidInstrumentedTest by getting {
             dependsOn(commonTest)
             dependencies {
@@ -58,6 +53,16 @@ kotlin {
                 implementation(libs.compose.ui.test.junit4)
                 implementation(libs.compose.ui.test.manifest)
             }
+        }
+
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
         }
     }
 }

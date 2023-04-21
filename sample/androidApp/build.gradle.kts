@@ -75,8 +75,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":zoomable"))
+    implementation(project(":sample:shared"))
     implementation(libs.androidx.activity.compose)
-    implementation(libs.compose.material)
-    implementation(libs.coil.compose)
 }

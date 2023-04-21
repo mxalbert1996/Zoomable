@@ -64,7 +64,6 @@ class ZoomableAndroidTest {
             .assertHeightIsEqualTo(getUnclippedBoundsInRoot().height * 2)
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun panGesture() = test { content ->
         performTouchInput { doubleClick(position = Offset.Zero) }
