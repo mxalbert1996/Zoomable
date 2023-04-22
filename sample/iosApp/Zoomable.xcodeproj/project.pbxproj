@@ -43,7 +43,6 @@
 				1F3458CA2AE3AB33E5A0BB40 /* Pods-Zoomable.debug.xcconfig */,
 				9C7DF64FC93EE47D57283569 /* Pods-Zoomable.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

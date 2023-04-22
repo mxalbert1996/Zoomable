@@ -10,13 +10,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,8 +45,35 @@ import com.mxalbert.zoomable.rememberZoomableState
 import kotlinx.coroutines.launch
 
 @Composable
+internal fun ZoomableApp(
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(colors = darkColors()) {
+        Surface(color = MaterialTheme.colors.background) {
+            Box(modifier = modifier.fillMaxSize()) {
+                content()
+
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing
+                                .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+                        )
+                ) {
+                    Snackbar(snackbarData = it)
+                }
+            }
+        }
+    }
+}
+
+@Composable
 internal fun ZoomableImagePage(
-    onDismiss: () -> Boolean,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     image: @Composable () -> Unit
 ) {
@@ -60,7 +97,13 @@ internal fun ZoomableImagePage(
             enabled = enabled,
             onTap = { isOverlayVisible = !isOverlayVisible },
             dismissGestureEnabled = true,
-            onDismiss = onDismiss,
+            onDismiss = {
+                scope.launch {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    snackbarHostState.showSnackbar("Dismissed.")
+                }
+                false
+            },
             content = image
         )
 
@@ -72,7 +115,10 @@ internal fun ZoomableImagePage(
             Row(
                 modifier = Modifier
                     .background(MaterialTheme.colors.surface.copy(alpha = 0.3f))
-                    .statusBarPadding()
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing
+                            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                    )
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically
