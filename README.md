@@ -3,10 +3,10 @@
 ![Build & test](https://github.com/mxalbert1996/Zoomable/actions/workflows/build.yml/badge.svg)
 [![Maven Central](https://img.shields.io/maven-central/v/com.mxalbert.zoomable/zoomable)](https://search.maven.org/artifact/com.mxalbert.zoomable/zoomable)
 
-Content zooming with dragging, double tap and dismiss gesture support for Compose.
-Supports Jetpack Compose and Compose for Desktop.
+Content zooming with dragging, double tap and dismiss gesture support for Compose Multiplatform.
+Supports Android, iOS and desktop.
 
-The demo can also be installed from [Google Play](https://play.google.com/store/apps/details?id=com.mxalbert.zoomable.sample).
+The demo for Android can also be installed from [Google Play](https://play.google.com/store/apps/details?id=com.mxalbert.zoomable.sample).
 
 ## Features
 
@@ -61,7 +61,7 @@ Note that `Modifier.aspectRatio()` is needed in order to remove the extra space 
 when the image is zoomed.
 
 For how to use `Zoomable` with [Coil](https://github.com/coil-kt/coil), see
-[the sample](sample/src/main/java/com/mxalbert/zoomable/sample/MainActivity.kt).
+[the sample](sample/shared/src/androidMain/kotlin/com/mxalbert/zoomable/sample/ZoomableApp.android.kt#L26-L41).
 
 ## Notes
 
