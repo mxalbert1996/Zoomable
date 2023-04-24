@@ -9,6 +9,8 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIEdgeInsets
 
 fun MainViewController() = ComposeUIViewController {
+    // This doesn't update after orientation changes
+    // TODO: Make this observable after it's supported by Compose
     val insets = UIApplication.sharedApplication.keyWindow
         ?.safeAreaInsets?.useContents { toWindowInsets() }
         ?: LocalWindowInsets.current
