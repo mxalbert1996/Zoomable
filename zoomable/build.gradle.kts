@@ -28,14 +28,20 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                compileOnly(libs.compose.runtime.jetbrains)
+                compileOnly(libs.compose.foundation.jetbrains)
+                compileOnly(libs.compose.ui.util.jetbrains)
+            }
+        }
+        val commonTest by getting
+
+        val jvmMain by getting {
+            dependencies {
                 implementation(libs.compose.runtime.jetbrains)
                 implementation(libs.compose.foundation.jetbrains)
                 implementation(libs.compose.ui.util.jetbrains)
             }
         }
-        val commonTest by getting
-
-        val jvmMain by getting
         val jvmTest by getting {
             dependsOn(commonTest)
             dependencies {
@@ -45,7 +51,14 @@ kotlin {
             }
         }
 
-        val androidMain by getting
+        val androidMain by getting {
+            dependencies {
+                // Directly depend on Jetpack Compose for Android
+                implementation(libs.compose.runtime.jetpack)
+                implementation(libs.compose.foundation.jetpack)
+                implementation(libs.compose.ui.util.jetpack)
+            }
+        }
         val androidInstrumentedTest by getting {
             dependsOn(commonTest)
             dependencies {
@@ -63,6 +76,11 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+            dependencies {
+                implementation(libs.compose.runtime.jetbrains)
+                implementation(libs.compose.foundation.jetbrains)
+                implementation(libs.compose.ui.util.jetbrains)
+            }
         }
     }
 }
