@@ -12,7 +12,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.junit.Test
 
 @Suppress("TestFunctionName")
@@ -345,15 +347,35 @@ class ZoomableTest {
             dismissGestureEnabled = false
         )
         SuspendingGestureTestUtil(width = size.width, height = size.height) {
-            detectZoomableGestures(
-                state = scope.state,
-                onTap = { scope.onTap() },
-                dismissGestureEnabled = scope.dismissGestureEnabled,
-                onDismiss = mutableStateOf({
-                    scope.onDismiss()
-                    false
-                })
-            )
+            coroutineScope {
+                launch {
+                    detectTap(
+                        onTap = { scope.onTap() },
+                        coroutineScope = this,
+                        state = scope.state
+                    )
+                }
+                launch {
+                    detectTransform(
+                        state = scope.state,
+                        coroutineScope = this,
+                    )
+                }
+                launch {
+                    detectDrag(
+                        state = scope.state,
+                        coroutineScope = this,
+                        dismissGestureEnabledState = scope.dismissGestureEnabled,
+                        onDismissState = mutableStateOf({
+                            scope.onDismiss()
+                            false
+                        })
+                    )
+                }
+            }
+
+
+
         }.executeInComposition {
             block(scope)
         }
