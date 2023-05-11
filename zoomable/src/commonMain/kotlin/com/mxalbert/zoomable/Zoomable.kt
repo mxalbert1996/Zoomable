@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -119,7 +120,8 @@ internal suspend fun PointerInputScope.detectZoomableGestures(
     dismissGestureEnabled: State<Boolean>,
     onDismiss: State<() -> Boolean>
 ): Unit = coroutineScope {
-    launch {
+    // 'start = CoroutineStart.UNDISPATCHED' required so handler doesn't miss first event.
+    launch(start = CoroutineStart.UNDISPATCHED) {
         detectTapGestures(
             onTap = onTap,
             onDoubleTap = { offset ->
@@ -138,7 +140,7 @@ internal suspend fun PointerInputScope.detectZoomableGestures(
             }
         )
     }
-    launch {
+    launch(start = CoroutineStart.UNDISPATCHED) {
         detectTransformGestures(
             onGestureStart = { state.onGestureStart() },
             onGesture = { centroid, pan, zoom ->
@@ -151,7 +153,7 @@ internal suspend fun PointerInputScope.detectZoomableGestures(
             onGestureEnd = { state.onTransformEnd() }
         )
     }
-    launch {
+    launch(start = CoroutineStart.UNDISPATCHED) {
         detectDragGestures(
             state = state,
             dismissGestureEnabled = dismissGestureEnabled,
