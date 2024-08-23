@@ -1,13 +1,14 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlin.plugin.compose)
     alias(libs.plugins.kotlin.binaryCompatibilityValidator)
     alias(libs.plugins.dokka)
     alias(libs.plugins.maven.publish.base)
@@ -16,78 +17,53 @@ plugins {
 kotlin {
     jvm()
 
-    android {
+    androidTarget {
         publishLibraryVariants("release")
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+        }
     }
 
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
-    @Suppress("UNUSED_VARIABLE")
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                compileOnly(libs.compose.runtime.jetbrains)
-                compileOnly(libs.compose.foundation.jetbrains)
-                compileOnly(libs.compose.ui.util.jetbrains)
-            }
-        }
-        val commonTest by getting
-
-        val jvmMain by getting {
-            dependencies {
-                implementation(libs.compose.runtime.jetbrains)
-                implementation(libs.compose.foundation.jetbrains)
-                implementation(libs.compose.ui.util.jetbrains)
-            }
-        }
-        val jvmTest by getting {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(libs.jUnit)
-                implementation(libs.truth)
-                implementation(libs.coroutines.test)
-            }
+        commonMain.dependencies {
+            compileOnly(libs.compose.runtime.jetbrains)
+            compileOnly(libs.compose.foundation.jetbrains)
+            compileOnly(libs.compose.ui.util.jetbrains)
         }
 
-        val androidMain by getting {
-            dependencies {
-                // Directly depend on Jetpack Compose for Android
-                implementation(libs.compose.runtime.jetpack)
-                implementation(libs.compose.foundation.jetpack)
-                implementation(libs.compose.ui.util.jetpack)
-            }
+        jvmMain.dependencies {
+            implementation(libs.compose.runtime.jetbrains)
+            implementation(libs.compose.foundation.jetbrains)
+            implementation(libs.compose.ui.util.jetbrains)
         }
-        val androidInstrumentedTest by getting {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(libs.truth)
-                implementation(libs.compose.ui.test.junit4)
-                implementation(libs.compose.ui.test.manifest)
-            }
+        jvmTest.dependencies {
+            implementation(libs.jUnit)
+            implementation(libs.truth)
+            implementation(libs.coroutines.test)
         }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-            dependencies {
-                implementation(libs.compose.runtime.jetbrains)
-                implementation(libs.compose.foundation.jetbrains)
-                implementation(libs.compose.ui.util.jetbrains)
-            }
+        androidMain.dependencies {
+            // Directly depend on Jetpack Compose for Android
+            implementation(libs.compose.runtime.jetpack)
+            implementation(libs.compose.foundation.jetpack)
+            implementation(libs.compose.ui.util.jetpack)
         }
-    }
-}
+        androidInstrumentedTest.dependencies {
+            implementation(libs.truth)
+            implementation(libs.compose.ui.test.junit4)
+            implementation(libs.compose.ui.test.manifest)
+        }
 
-tasks.withType(KotlinCompile::class).configureEach {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_1_8)
+        iosMain.dependencies {
+            implementation(libs.compose.runtime.jetbrains)
+            implementation(libs.compose.foundation.jetbrains)
+            implementation(libs.compose.ui.util.jetbrains)
+        }
     }
 }
 
@@ -125,9 +101,9 @@ publishing {
         val version = property("VERSION_NAME") as String
         maven(
             url = if (version.endsWith("SNAPSHOT")) {
-                "$buildDir/repos/snapshots"
+                layout.buildDirectory.dir("repos/snapshots")
             } else {
-                "$buildDir/repos/releases"
+                layout.buildDirectory.dir("repos/releases")
             }
         )
     }

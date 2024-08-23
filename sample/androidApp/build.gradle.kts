@@ -3,6 +3,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     kotlin("android")
     id("com.android.application")
+    alias(libs.plugins.kotlin.plugin.compose)
 }
 
 android {
@@ -49,10 +50,6 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     buildTypes {
