@@ -41,11 +41,6 @@ kotlin {
             implementation(libs.compose.foundation.jetbrains)
             implementation(libs.compose.ui.util.jetbrains)
         }
-        jvmTest.dependencies {
-            implementation(libs.jUnit)
-            implementation(libs.truth)
-            implementation(libs.coroutines.test)
-        }
 
         androidMain.dependencies {
             // Directly depend on Jetpack Compose for Android
@@ -53,8 +48,11 @@ kotlin {
             implementation(libs.compose.foundation.jetpack)
             implementation(libs.compose.ui.util.jetpack)
         }
-        androidInstrumentedTest.dependencies {
+        androidUnitTest.dependencies {
+            implementation(libs.jUnit)
             implementation(libs.truth)
+            implementation(libs.robolectric)
+            implementation(libs.test.ext.junit)
             implementation(libs.compose.ui.test.junit4)
             implementation(libs.compose.ui.test.manifest)
         }
@@ -81,7 +79,10 @@ android {
     }
 
     testOptions {
-        unitTests.isReturnDefaultValues = true
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
     }
 
     packagingOptions.resources.pickFirsts.add("META-INF/*")

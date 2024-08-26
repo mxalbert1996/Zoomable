@@ -17,7 +17,8 @@ androidx-activity = "1.9.1"
 coil = "2.7.0"
 jUnit = "4.13.2"
 truth = "1.4.4"
-testExt = "1.2.1"
+test-ext-junit = "1.2.1"
+robolectric = "4.13"
 
 [libraries]
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -41,7 +42,8 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 jUnit = { module = "junit:junit", version.ref = "jUnit" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
-testExt = { module = "androidx.test.ext:junit", version.ref = "testExt" }
+test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "test-ext-junit" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [plugins]
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-jetbrains" }
