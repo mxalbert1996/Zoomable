@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeUIViewController
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIApplication
 import platform.UIKit.UIEdgeInsets
 
+@OptIn(ExperimentalForeignApi::class)
 fun MainViewController() = ComposeUIViewController {
-    // This doesn't update after orientation changes
-    // TODO: Make this observable after it's supported by Compose
     val insets = UIApplication.sharedApplication.keyWindow
         ?.safeAreaInsets?.useContents { toWindowInsets() }
         ?: LocalWindowInsets.current

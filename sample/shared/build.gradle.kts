@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
-    kotlin("native.cocoapods")
     id("com.android.library")
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.plugin.compose)
@@ -14,23 +13,18 @@ kotlin {
 
     androidTarget()
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
-    applyDefaultHierarchyTemplate()
-
-    cocoapods {
-        version = property("VERSION_NAME") as String
-        summary = property("POM_DESCRIPTION") as String
-        homepage = property("POM_URL") as String
-        ios.deploymentTarget = "14.1"
-        podfile = project.file("../iosApp/Podfile")
-        framework {
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
             baseName = "shared"
             isStatic = true
         }
     }
+
+    applyDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
