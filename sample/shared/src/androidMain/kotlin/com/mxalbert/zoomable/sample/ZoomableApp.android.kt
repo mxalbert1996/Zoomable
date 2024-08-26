@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -21,7 +22,7 @@ fun ZoomableApp() {
     val snackbarHostState = remember { SnackbarHostState() }
 
     ZoomableApp(snackbarHostState = snackbarHostState) {
-        HorizontalPager(pageCount = Images.size) { index ->
+        HorizontalPager(state = rememberPagerState { Images.size }) { index ->
             ZoomableImagePage(snackbarHostState = snackbarHostState) {
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)

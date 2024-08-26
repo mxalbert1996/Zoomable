@@ -1,23 +1,24 @@
 [versions]
-agp = "8.0.0"
+agp = "8.5.2"
 sdk-min = "21"
-sdk-target = "33"
-sdk-compile = "33"
-buildTools = "33.0.2"
-binaryCompatibilityValidator = "0.13.0"
-maven-publish = "0.25.2"
-kotlin = "1.8.20"
-dokka = "1.8.10"
-coroutines = "1.6.4"
-compose-jetbrains = "1.4.0"
-compose-jetpack = "1.4.2"
-compose-compiler = "1.4.6"
-ktor = "2.3.0"
-androidx-activity = "1.7.1"
-coil = "2.2.2"
+sdk-target = "34"
+sdk-compile = "34"
+buildTools = "35.0.0"
+binaryCompatibilityValidator = "0.16.3"
+maven-publish = "0.29.0"
+kotlin = "2.0.20"
+dokka = "1.9.20"
+coroutines = "1.8.1"
+compose-jetbrains = "1.6.11"
+compose-jetpack = "1.6.8"
+compose-compiler = "1.5.15"
+ktor = "2.3.12"
+androidx-activity = "1.9.1"
+coil = "2.7.0"
 jUnit = "4.13.2"
-truth = "1.1.3"
-testExt = "1.1.5"
+truth = "1.4.4"
+test-ext-junit = "1.2.1"
+robolectric = "4.13"
 
 [libraries]
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -41,10 +42,12 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 jUnit = { module = "junit:junit", version.ref = "jUnit" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
-testExt = { module = "androidx.test.ext:junit", version.ref = "testExt" }
+test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "test-ext-junit" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [plugins]
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-jetbrains" }
+kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 maven-publish-base = { id = "com.vanniktech.maven.publish.base", version.ref = "maven-publish" }
