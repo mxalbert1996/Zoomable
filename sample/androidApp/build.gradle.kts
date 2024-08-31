@@ -1,5 +1,3 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     kotlin("android")
     id("com.android.application")
@@ -22,24 +20,9 @@ android {
         targetSdk = libs.versions.sdk.target.get().toInt()
         resourceConfigurations += "en"
         val libVersion = property("VERSION_NAME") as String
-        val isSnapshot = libVersion.endsWith("SNAPSHOT")
-        val appVersion = if (isSnapshot) {
-            ByteArrayOutputStream().use { os ->
-                exec {
-                    setCommandLine("git", "describe", "--tags")
-                    standardOutput = os
-                }
-                os.toString()
-            }
-        } else libVersion
-        val (version, commitCount) = if (isSnapshot) {
-            val description = appVersion.split('-')
-            description[0] to description[1].toInt()
-        } else {
-            libVersion to 0
-        }
+        val appVersion = libVersion.substringBefore('-')
         versionName = appVersion
-        versionCode = commitCount + version.split('.')
+        versionCode = appVersion.split('.')
             .fold(0) { result, number -> (result + number.toInt()) * 100 }
     }
 
