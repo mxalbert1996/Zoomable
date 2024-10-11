@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -22,6 +23,12 @@ kotlin {
             baseName = "shared"
             isStatic = true
         }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.library()
     }
 
     applyDefaultHierarchyTemplate()
@@ -56,6 +63,13 @@ kotlin {
             dependsOn(nonAndroidMain)
             dependencies {
                 implementation(libs.ktor.client.darwin)
+            }
+        }
+
+        val wasmJsMain by getting {
+            dependsOn(nonAndroidMain)
+            dependencies {
+                implementation(libs.ktor.client.js)
             }
         }
     }

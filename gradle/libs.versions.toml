@@ -12,7 +12,7 @@ coroutines = "1.8.1"
 compose-jetbrains = "1.6.11"
 compose-jetpack = "1.6.8"
 compose-compiler = "1.5.15"
-ktor = "2.3.12"
+ktor = "3.0.0"
 androidx-activity = "1.9.1"
 coil = "2.7.0"
 jUnit = "4.13.2"
@@ -38,6 +38,7 @@ compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", ve
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 jUnit = { module = "junit:junit", version.ref = "jUnit" }
