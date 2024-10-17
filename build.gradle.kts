@@ -17,6 +17,6 @@ buildscript {
     }
 }
 
-task<Delete>("clean") {
+tasks.withType<Delete> {
     delete(rootProject.layout.buildDirectory)
 }

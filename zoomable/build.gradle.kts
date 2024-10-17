@@ -2,6 +2,7 @@ import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -28,6 +29,12 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.library()
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -58,6 +65,12 @@ kotlin {
         }
 
         iosMain.dependencies {
+            implementation(libs.compose.runtime.jetbrains)
+            implementation(libs.compose.foundation.jetbrains)
+            implementation(libs.compose.ui.util.jetbrains)
+        }
+
+        wasmJsMain.dependencies {
             implementation(libs.compose.runtime.jetbrains)
             implementation(libs.compose.foundation.jetbrains)
             implementation(libs.compose.ui.util.jetbrains)
