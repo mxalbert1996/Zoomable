@@ -7,7 +7,7 @@ import com.mxalbert.zoomable.sample.ZoomableApp
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     CanvasBasedWindow(
-        title = "Kotlin/Wasm Example",
+        title = "Zoomable",
         canvasElementId = "canvas",
     ) {
         ZoomableApp()

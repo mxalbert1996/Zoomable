@@ -11,12 +11,13 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser {
+            val rootDirPath = project.rootDir.path
             commonWebpackConfig {
                 outputFileName = "zoomable.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
                     port = 8080
                     static = (static ?: mutableListOf()).apply {
-                        add(project.rootDir.path)
+                        add(rootDirPath)
                     }
                 }
             }
