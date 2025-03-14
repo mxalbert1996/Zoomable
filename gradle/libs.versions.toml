@@ -1,24 +1,23 @@
 [versions]
-agp = "8.5.2"
+agp = "8.9.0"
 sdk-min = "21"
-sdk-target = "34"
-sdk-compile = "34"
-buildTools = "35.0.0"
-binaryCompatibilityValidator = "0.16.3"
-maven-publish = "0.29.0"
-kotlin = "2.0.21"
-dokka = "1.9.20"
-coroutines = "1.8.1"
-compose-jetbrains = "1.6.11"
-compose-jetpack = "1.6.8"
-compose-compiler = "1.5.15"
-ktor = "3.0.0"
-androidx-activity = "1.9.1"
+sdk-target = "35"
+sdk-compile = "35"
+buildTools = "35.0.1"
+binaryCompatibilityValidator = "0.17.0"
+maven-publish = "0.31.0"
+kotlin = "2.1.10"
+dokka = "2.0.0"
+coroutines = "1.10.1"
+compose-jetbrains = "1.7.3"
+compose-jetpack = "1.7.8"
+ktor = "3.0.3"
+androidx-activity = "1.10.1"
 coil = "2.7.0"
 jUnit = "4.13.2"
 truth = "1.4.4"
 test-ext-junit = "1.2.1"
-robolectric = "4.13"
+robolectric = "4.14.1"
 
 [libraries]
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -26,7 +25,6 @@ agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-compose-compiler-jetpack = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 compose-runtime-jetbrains = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-jetbrains" }
 compose-runtime-jetpack = { module = "androidx.compose.runtime:runtime", version.ref = "compose-jetpack" }
 compose-foundation-jetbrains = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-jetbrains" }
