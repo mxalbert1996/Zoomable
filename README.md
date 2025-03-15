@@ -61,7 +61,7 @@ Note that `Modifier.aspectRatio()` is needed in order to remove the extra space 
 when the image is zoomed.
 
 For how to use `Zoomable` with [Coil](https://github.com/coil-kt/coil), see
-[the sample](sample/shared/src/androidMain/kotlin/com/mxalbert/zoomable/sample/ZoomableApp.android.kt#L26-L41).
+[the sample](sample/shared/src/commonMain/kotlin/com/mxalbert/zoomable/sample/ZoomableApp.kt#L146-L161).
 
 ## Notes
 
