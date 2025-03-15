@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,11 +13,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
@@ -28,8 +33,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -39,13 +46,44 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.size.Size
 import com.mxalbert.zoomable.OverZoomConfig
 import com.mxalbert.zoomable.Zoomable
 import com.mxalbert.zoomable.rememberZoomableState
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun ZoomableApp(
+internal fun ZoomableAppWithPager() {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    ZoomableApp(snackbarHostState = snackbarHostState) {
+        HorizontalPager(state = rememberPagerState { Images.size }) { index ->
+            ZoomableImagePage(
+                imageUrl = Images[index],
+                snackbarHostState = snackbarHostState
+            )
+        }
+    }
+}
+
+@Composable
+internal fun ZoomableAppWithoutPager() {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    ZoomableApp(snackbarHostState = snackbarHostState) {
+        ZoomableImagePage(
+            imageUrl = Images[0],
+            snackbarHostState = snackbarHostState
+        )
+    }
+}
+
+@Composable
+private fun ZoomableApp(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
@@ -72,10 +110,10 @@ internal fun ZoomableApp(
 }
 
 @Composable
-internal fun ZoomableImagePage(
+private fun ZoomableImagePage(
+    imageUrl: String,
     snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-    image: @Composable () -> Unit
+    modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
     var enabled by rememberSaveable { mutableStateOf(true) }
@@ -103,9 +141,25 @@ internal fun ZoomableImagePage(
                     snackbarHostState.showSnackbar("Dismissed.")
                 }
                 false
-            },
-            content = image
-        )
+            }
+        ) {
+            val painter = rememberAsyncImagePainter(
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(imageUrl)
+                    .size(Size.ORIGINAL)
+                    .build()
+            )
+            if (painter.state.collectAsState().value is AsyncImagePainter.State.Success) {
+                val size = painter.intrinsicSize
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .aspectRatio(size.width / size.height)
+                        .fillMaxSize()
+                )
+            }
+        }
 
         AnimatedVisibility(
             visible = isOverlayVisible,

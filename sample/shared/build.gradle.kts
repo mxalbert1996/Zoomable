@@ -39,36 +39,30 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
-        }
-
-        val nonAndroidMain by creating {
-            dependsOn(commonMain.get())
-            dependencies {
-                implementation(libs.ktor.client.core)
-            }
+            implementation(libs.coil.compose)
         }
 
         val desktopMain by getting {
-            dependsOn(nonAndroidMain)
             dependencies {
+                implementation(libs.coil.network.ktor3)
                 implementation(libs.ktor.client.java)
             }
         }
 
         androidMain.dependencies {
-            implementation(libs.coil.compose)
+            implementation(libs.coil.network.okhttp)
         }
 
         iosMain {
-            dependsOn(nonAndroidMain)
             dependencies {
+                implementation(libs.coil.network.ktor3)
                 implementation(libs.ktor.client.darwin)
             }
         }
 
         val wasmJsMain by getting {
-            dependsOn(nonAndroidMain)
             dependencies {
+                implementation(libs.coil.network.ktor3)
                 implementation(libs.ktor.client.js)
             }
         }

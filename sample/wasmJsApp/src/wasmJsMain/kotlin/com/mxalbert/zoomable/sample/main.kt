@@ -1,8 +1,7 @@
-package com.github.trueddd
+package com.mxalbert.zoomable.sample
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.CanvasBasedWindow
-import com.mxalbert.zoomable.sample.ZoomableApp
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {

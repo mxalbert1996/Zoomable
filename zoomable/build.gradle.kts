@@ -1,7 +1,6 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.SonatypeHost
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -20,7 +19,6 @@ kotlin {
 
     androidTarget {
         publishLibraryVariants("release")
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_1_8)
         }
@@ -71,9 +69,9 @@ kotlin {
         }
 
         wasmJsMain.dependencies {
-            implementation(libs.compose.runtime.jetbrains)
-            implementation(libs.compose.foundation.jetbrains)
-            implementation(libs.compose.ui.util.jetbrains)
+            api(libs.compose.runtime.jetbrains)
+            api(libs.compose.foundation.jetbrains)
+            api(libs.compose.ui.util.jetbrains)
         }
     }
 }
@@ -107,7 +105,7 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.S01)
     signAllPublications()
     pomFromGradleProperties()
-    configure(KotlinMultiplatform(JavadocJar.Dokka("dokkaHtml")))
+    configure(KotlinMultiplatform(JavadocJar.Dokka("dokkaGenerate")))
 }
 
 publishing {

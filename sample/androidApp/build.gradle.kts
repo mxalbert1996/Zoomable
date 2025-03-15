@@ -18,7 +18,7 @@ android {
         applicationId = "com.mxalbert.zoomable.sample"
         minSdk = libs.versions.sdk.min.get().toInt()
         targetSdk = libs.versions.sdk.target.get().toInt()
-        resourceConfigurations += "en"
+        androidResources.localeFilters += "en"
         val libVersion = property("VERSION_NAME") as String
         val appVersion = libVersion.substringBefore('-')
         versionName = appVersion
